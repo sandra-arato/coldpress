@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>affinity-design — Skill Description Optimization</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 20px;
+            background: #faf9f5;
+            color: #141413;
+        }
+        h1 { font-family: 'Poppins', sans-serif; color: #141413; }
+        .explainer {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+            color: #b0aea5;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+        .summary {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            border: 1px solid #e8e6dc;
+        }
+        .summary p { margin: 5px 0; }
+        .best { color: #788c5d; font-weight: bold; }
+        .table-container {
+            overflow-x: auto;
+            width: 100%;
+        }
+        table {
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e8e6dc;
+            border-radius: 6px;
+            font-size: 12px;
+            min-width: 100%;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e8e6dc;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+        th {
+            font-family: 'Poppins', sans-serif;
+            background: #141413;
+            color: #faf9f5;
+            font-weight: 500;
+        }
+        th.test-col {
+            background: #6a9bcc;
+        }
+        th.query-col { min-width: 200px; }
+        td.description {
+            font-family: monospace;
+            font-size: 11px;
+            word-wrap: break-word;
+            max-width: 400px;
+        }
+        td.result {
+            text-align: center;
+            font-size: 16px;
+            min-width: 40px;
+        }
+        td.test-result {
+            background: #f0f6fc;
+        }
+        .pass { color: #788c5d; }
+        .fail { color: #c44; }
+        .rate {
+            font-size: 9px;
+            color: #b0aea5;
+            display: block;
+        }
+        tr:hover { background: #faf9f5; }
+        .score {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .score-good { background: #eef2e8; color: #788c5d; }
+        .score-ok { background: #fef3c7; color: #d97706; }
+        .score-bad { background: #fceaea; color: #c44; }
+        .train-label { color: #b0aea5; font-size: 10px; }
+        .test-label { color: #6a9bcc; font-size: 10px; font-weight: bold; }
+        .best-row { background: #f5f8f2; }
+        th.positive-col { border-bottom: 3px solid #788c5d; }
+        th.negative-col { border-bottom: 3px solid #c44; }
+        th.test-col.positive-col { border-bottom: 3px solid #788c5d; }
+        th.test-col.negative-col { border-bottom: 3px solid #c44; }
+        .legend { font-family: 'Poppins', sans-serif; display: flex; gap: 20px; margin-bottom: 10px; font-size: 13px; align-items: center; }
+        .legend-item { display: flex; align-items: center; gap: 6px; }
+        .legend-swatch { width: 16px; height: 16px; border-radius: 3px; display: inline-block; }
+        .swatch-positive { background: #141413; border-bottom: 3px solid #788c5d; }
+        .swatch-negative { background: #141413; border-bottom: 3px solid #c44; }
+        .swatch-test { background: #6a9bcc; }
+        .swatch-train { background: #141413; }
+    </style>
+</head>
+<body>
+    <h1>affinity-design — Skill Description Optimization</h1>
+    <div class="explainer">
+        <strong>Optimizing your skill's description.</strong> This page updates automatically as Claude tests different versions of your skill's description. Each row is an iteration — a new description attempt. The columns show test queries: green checkmarks mean the skill triggered correctly (or correctly didn't trigger), red crosses mean it got it wrong. The "Train" score shows performance on queries used to improve the description; the "Test" score shows performance on held-out queries the optimizer hasn't seen. When it's done, Claude will apply the best-performing description to your skill.
+    </div>
+
+    <div class="summary">
+        <p><strong>Original:</strong> Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document — including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like &quot;in Affinity&quot;, &quot;Affinity Publisher&quot;, &quot;Affinity Designer&quot;, &quot;make a book in Affinity&quot;, &quot;place this in Affinity&quot;, &quot;export the Affinity doc&quot;, or whenever the workflow used to be &quot;do this in Canva&quot; but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.</p>
+        <p class="best"><strong>Best:</strong> Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document — including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like &quot;in Affinity&quot;, &quot;Affinity Publisher&quot;, &quot;Affinity Designer&quot;, &quot;make a book in Affinity&quot;, &quot;place this in Affinity&quot;, &quot;export the Affinity doc&quot;, or whenever the workflow used to be &quot;do this in Canva&quot; but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.</p>
+        <p><strong>Best Score:</strong> 3/7 (test)</p>
+        <p><strong>Iterations:</strong> 5 | <strong>Train:</strong> 13 | <strong>Test:</strong> 7</p>
+    </div>
+
+    <div class="legend">
+        <span style="font-weight:600">Query columns:</span>
+        <span class="legend-item"><span class="legend-swatch swatch-positive"></span> Should trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-negative"></span> Should NOT trigger</span>
+        <span class="legend-item"><span class="legend-swatch swatch-train"></span> Train</span>
+        <span class="legend-item"><span class="legend-swatch swatch-test"></span> Test</span>
+    </div>
+
+    <div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Iter</th>
+                <th>Train</th>
+                <th>Test</th>
+                <th class="query-col">Description</th>
+                <th class="positive-col">i want to script a guide-line setup across all 38 spreads in my open .afdesign — guides at 20mm and 40mm from the top of every page, plus the page-centre vertical</th>
+                <th class="positive-col">the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() — what&#x27;s going on, am i holding it wrong?</th>
+                <th class="positive-col">save this script to the Affinity script library so i can re-run it from the Scripts panel later — it&#x27;s the one we just got working that adds the cover title frame</th>
+                <th class="positive-col">search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history</th>
+                <th class="positive-col">in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me — needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub</th>
+                <th class="positive-col">place this PNG of the budapest skyline (it&#x27;s on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges</th>
+                <th class="positive-col">I want to script some hatching in the open .afphoto file — call out to the rasterbrush API</th>
+                <th class="negative-col">design a logo for Ribbon — vector, two-tone, modern. should work on a dark background as well as light</th>
+                <th class="negative-col">vectorize this PNG of a hungarian folk pattern and remove the white background. it&#x27;s at ~/Desktop/research/folk-pattern.png</th>
+                <th class="negative-col">build me a quick chart showing Recraft credit usage over the last week — i&#x27;m worried we&#x27;re burning through them too fast on the hungary book</th>
+                <th class="negative-col">search my Canva folders for the Q4 launch deck and export it as PDF to my downloads</th>
+                <th class="negative-col">create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier</th>
+                <th class="negative-col">open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck</th>
+                <th class="test-col positive-col">make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around</th>
+                <th class="test-col positive-col">render the current spread in my open Affinity doc so i can check if my last script actually worked — it claimed it placed three text frames but i don&#x27;t trust it</th>
+                <th class="test-col positive-col">I switched the P8 scrapbook factory from Canva to Affinity — can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarország ABC, ~72pt</th>
+                <th class="test-col positive-col">iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.</th>
+                <th class="test-col negative-col">I&#x27;m building a frontend dashboard for design metrics — make it look polished, distinctive, not the usual AI-generic look</th>
+                <th class="test-col negative-col">configure my .claude settings.json to allow gh commands without prompting on this machine</th>
+                <th class="test-col negative-col">add a CRM contact for Karim at Leonardo to my Affinity database — he&#x27;s the one I&#x27;m reporting to about the 6-hour workday transition</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="best-row">
+                <td>1</td>
+                <td><span class="score score-bad">18/39</span></td>
+                <td><span class="score score-bad">9/21</span></td>
+                <td class="description">Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document — including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like &quot;in Affinity&quot;, &quot;Affinity Publisher&quot;, &quot;Affinity Designer&quot;, &quot;make a book in Affinity&quot;, &quot;place this in Affinity&quot;, &quot;export the Affinity doc&quot;, or whenever the workflow used to be &quot;do this in Canva&quot; but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>2</td>
+                <td><span class="score score-bad">18/39</span></td>
+                <td><span class="score score-bad">9/21</span></td>
+                <td class="description">Use this skill for ANY task involving Affinity Designer, Affinity Publisher, or Affinity Photo — the desktop apps controlled via the Affinity MCP (`mcp__affinity__*` tools) by writing JavaScript that runs inside the live app. Trigger whenever the user mentions Affinity by name, references `.afdesign` / `.afpub` / `.afphoto` files, or talks about the Affinity SDK, Affinity scripts, the Affinity script library, or Affinity SDK hints. Covers: creating new Publisher books with bleed/page counts, placing picture or text frames, scripting guides/master pages, applying fills/colours/strokes, modifying selections, exporting PDFs/PNGs, debugging Affinity MCP errors (e.g. `NOT_ALLOWED`), saving scripts back to the user&#x27;s Scripts panel, and searching the SDK hints pool. Use this even when the request looks like a generic design or scripting task — if it touches an Affinity document or the Affinity MCP, this skill owns it. Prefer this over canva-design once a project has moved to Affinity.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>3</td>
+                <td><span class="score score-bad">18/39</span></td>
+                <td><span class="score score-bad">9/21</span></td>
+                <td class="description">Use this skill whenever the user&#x27;s request touches Affinity Designer, Affinity Publisher, or Affinity Photo — including `.afdesign`, `.afpub`, `.afphoto` files, the Affinity SDK, Affinity scripts, the Scripts panel/library, SDK hints, or any `mcp__affinity__*` tool. This skill writes JavaScript that runs inside the live Affinity app via MCP. Use it for: setting up Publisher books (size, bleed, page count, facing/non-facing), placing picture or text frames, importing PNGs onto pages, scripting guides or master pages, applying fills/strokes/colours (RGB or CMYK), modifying selections, exporting PDFs/PNGs per-page or whole-book, debugging Affinity MCP errors like `NOT_ALLOWED`, saving working scripts to the user&#x27;s library, or searching SDK hints. If the user names Affinity, an Affinity file extension, or describes a design/layout/export/scripting task on a doc they&#x27;ve said is open in Affinity, this skill owns it — even when the surface task sounds like generic scripting, design, or file I/O.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>4</td>
+                <td><span class="score score-bad">19/39</span></td>
+                <td><span class="score score-bad">9/21</span></td>
+                <td class="description">Use for any work inside Affinity Designer, Affinity Publisher, or Affinity Photo. Triggers: the word &quot;Affinity&quot;; `.afdesign`, `.afpub`, `.afphoto` files; the Affinity SDK, Scripts panel, script library, or SDK hints; any `mcp__affinity__*` tool; or `NOT_ALLOWED` errors from the Affinity MCP. Covers anything done inside an open Affinity doc via JavaScript through MCP: creating Publisher books with bleed/page-count/facing settings, placing picture or text frames, importing PNGs onto pages, scripting guides and master pages, applying RGB/CMYK fills and strokes, manipulating selections, exporting PDFs/PNGs per-page or whole-book, debugging MCP permission errors, saving scripts to the library, searching SDK hints. If the user names Affinity or an Affinity file — even when the surface request sounds like generic scripting, layout, file I/O, or &quot;call some API from inside this open .afphoto&quot; — this skill owns it. Prefer over canva-design once a project has moved to Affinity.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+            <tr class="">
+                <td>5</td>
+                <td><span class="score score-bad">19/39</span></td>
+                <td><span class="score score-bad">10/21</span></td>
+                <td class="description">Use this skill for any Affinity Designer, Affinity Publisher, or Affinity Photo task. Trigger on: the word &quot;Affinity&quot;; the file extensions `.afdesign`, `.afpub`, `.afphoto`; any `mcp__affinity__*` tool; the Affinity SDK, Scripts panel, script library, or SDK hints; and `NOT_ALLOWED` errors from the Affinity MCP. Typical jobs: setting up Publisher books (size, bleed, pages, facing), placing picture/text frames, importing PNGs onto pages, scripting guides/master pages, applying RGB or CMYK fills/strokes, manipulating selections, exporting PDFs/PNGs per-page or whole-book, debugging MCP permission errors, saving scripts to the library, searching SDK hints, calling SDK APIs from inside a live Affinity doc. If the user names Affinity, an Affinity file, or describes scripting/layout/export work on a doc they&#x27;ve said is open in Affinity, use this skill — even when the surface task sounds like generic JavaScript, file I/O, or design work. Prefer over canva-design once a project has switched to Affinity.</td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">0/3</span></td>
+                <td class="result fail">✗<span class="rate">1/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">1/3</span></td>
+                <td class="result test-result fail">✗<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+                <td class="result test-result pass">✓<span class="rate">0/3</span></td>
+            </tr>
+        </tbody>
+    </table>
+    </div>
+
+</body>
+</html>

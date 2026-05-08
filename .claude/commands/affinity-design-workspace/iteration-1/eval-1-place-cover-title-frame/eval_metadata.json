@@ -1,0 +1,6 @@
+{
+  "eval_id": 1,
+  "eval_name": "place-cover-title-frame",
+  "prompt": "I have a Publisher document open on spread 0 (the cover). I need a centred text frame near the top with the title 'Magyarország ABC' set in a Hungarian-friendly sans-serif at around 72 pt. After placing it, verify that the result matches what you intended. Produce the script(s) and verification plan as files. Do not actually execute anything via the MCP.",
+  "assertions": []
+}

@@ -1,0 +1,17 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS noise
+.DS_Store
+Thumbs.db
+
+# All books are private by default; un-ignore the public demo explicitly.
+books/*
+!books/sunshine-coast-demo/
+
+# Within any included book, never commit heavy / personal artefacts.
+# (Applies to sunshine-coast-demo too — large assets stay out of git unless
+# you deliberately add them.)
+books/*

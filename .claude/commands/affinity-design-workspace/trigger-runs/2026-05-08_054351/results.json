@@ -1,0 +1,1430 @@
+{
+  "exit_reason": "max_iterations (5)",
+  "original_description": "Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document \u2014 including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like \"in Affinity\", \"Affinity Publisher\", \"Affinity Designer\", \"make a book in Affinity\", \"place this in Affinity\", \"export the Affinity doc\", or whenever the workflow used to be \"do this in Canva\" but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.",
+  "best_description": "Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document \u2014 including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like \"in Affinity\", \"Affinity Publisher\", \"Affinity Designer\", \"make a book in Affinity\", \"place this in Affinity\", \"export the Affinity doc\", or whenever the workflow used to be \"do this in Canva\" but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.",
+  "best_score": "3/7",
+  "best_train_score": "6/13",
+  "best_test_score": "3/7",
+  "final_description": "Use this skill for any Affinity Designer, Affinity Publisher, or Affinity Photo task. Trigger on: the word \"Affinity\"; the file extensions `.afdesign`, `.afpub`, `.afphoto`; any `mcp__affinity__*` tool; the Affinity SDK, Scripts panel, script library, or SDK hints; and `NOT_ALLOWED` errors from the Affinity MCP. Typical jobs: setting up Publisher books (size, bleed, pages, facing), placing picture/text frames, importing PNGs onto pages, scripting guides/master pages, applying RGB or CMYK fills/strokes, manipulating selections, exporting PDFs/PNGs per-page or whole-book, debugging MCP permission errors, saving scripts to the library, searching SDK hints, calling SDK APIs from inside a live Affinity doc. If the user names Affinity, an Affinity file, or describes scripting/layout/export work on a doc they've said is open in Affinity, use this skill \u2014 even when the surface task sounds like generic JavaScript, file I/O, or design work. Prefer over canva-design once a project has switched to Affinity.",
+  "iterations_run": 5,
+  "holdout": 0.4,
+  "train_size": 13,
+  "test_size": 7,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "Create, edit, lay out, and export designs in Affinity Designer/Publisher/Photo (the Canva-owned desktop apps) by writing JavaScript scripts and running them through the Affinity MCP. Use this skill whenever the user wants to build, modify, place content in, or export an Affinity document \u2014 including multi-page Publisher books, single-spread Designer posters, page layouts, picture frames, text frames, master pages, exports to PDF/PNG/etc., or any task involving the `mcp__affinity__*` tools or `.afdesign` / `.afpub` / `.afphoto` files. Trigger on phrases like \"in Affinity\", \"Affinity Publisher\", \"Affinity Designer\", \"make a book in Affinity\", \"place this in Affinity\", \"export the Affinity doc\", or whenever the workflow used to be \"do this in Canva\" but the user has switched to Affinity. Prefer this skill over the canva-design skill once a project has moved to Affinity.",
+      "train_passed": 6,
+      "train_failed": 7,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "render the current spread in my open Affinity doc so i can check if my last script actually worked \u2014 it claimed it placed three text frames but i don't trust it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I switched the P8 scrapbook factory from Canva to Affinity \u2014 can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarorsz\u00e1g ABC, ~72pt",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I'm building a frontend dashboard for design metrics \u2014 make it look polished, distinctive, not the usual AI-generic look",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "configure my .claude settings.json to allow gh commands without prompting on this machine",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add a CRM contact for Karim at Leonardo to my Affinity database \u2014 he's the one I'm reporting to about the 6-hour workday transition",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "results": [
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill for ANY task involving Affinity Designer, Affinity Publisher, or Affinity Photo \u2014 the desktop apps controlled via the Affinity MCP (`mcp__affinity__*` tools) by writing JavaScript that runs inside the live app. Trigger whenever the user mentions Affinity by name, references `.afdesign` / `.afpub` / `.afphoto` files, or talks about the Affinity SDK, Affinity scripts, the Affinity script library, or Affinity SDK hints. Covers: creating new Publisher books with bleed/page counts, placing picture or text frames, scripting guides/master pages, applying fills/colours/strokes, modifying selections, exporting PDFs/PNGs, debugging Affinity MCP errors (e.g. `NOT_ALLOWED`), saving scripts back to the user's Scripts panel, and searching the SDK hints pool. Use this even when the request looks like a generic design or scripting task \u2014 if it touches an Affinity document or the Affinity MCP, this skill owns it. Prefer this over canva-design once a project has moved to Affinity.",
+      "train_passed": 6,
+      "train_failed": 7,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "render the current spread in my open Affinity doc so i can check if my last script actually worked \u2014 it claimed it placed three text frames but i don't trust it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I switched the P8 scrapbook factory from Canva to Affinity \u2014 can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarorsz\u00e1g ABC, ~72pt",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I'm building a frontend dashboard for design metrics \u2014 make it look polished, distinctive, not the usual AI-generic look",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "configure my .claude settings.json to allow gh commands without prompting on this machine",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add a CRM contact for Karim at Leonardo to my Affinity database \u2014 he's the one I'm reporting to about the 6-hour workday transition",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "results": [
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Use this skill whenever the user's request touches Affinity Designer, Affinity Publisher, or Affinity Photo \u2014 including `.afdesign`, `.afpub`, `.afphoto` files, the Affinity SDK, Affinity scripts, the Scripts panel/library, SDK hints, or any `mcp__affinity__*` tool. This skill writes JavaScript that runs inside the live Affinity app via MCP. Use it for: setting up Publisher books (size, bleed, page count, facing/non-facing), placing picture or text frames, importing PNGs onto pages, scripting guides or master pages, applying fills/strokes/colours (RGB or CMYK), modifying selections, exporting PDFs/PNGs per-page or whole-book, debugging Affinity MCP errors like `NOT_ALLOWED`, saving working scripts to the user's library, or searching SDK hints. If the user names Affinity, an Affinity file extension, or describes a design/layout/export/scripting task on a doc they've said is open in Affinity, this skill owns it \u2014 even when the surface task sounds like generic scripting, design, or file I/O.",
+      "train_passed": 6,
+      "train_failed": 7,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "render the current spread in my open Affinity doc so i can check if my last script actually worked \u2014 it claimed it placed three text frames but i don't trust it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I switched the P8 scrapbook factory from Canva to Affinity \u2014 can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarorsz\u00e1g ABC, ~72pt",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I'm building a frontend dashboard for design metrics \u2014 make it look polished, distinctive, not the usual AI-generic look",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "configure my .claude settings.json to allow gh commands without prompting on this machine",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add a CRM contact for Karim at Leonardo to my Affinity database \u2014 he's the one I'm reporting to about the 6-hour workday transition",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "results": [
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Use for any work inside Affinity Designer, Affinity Publisher, or Affinity Photo. Triggers: the word \"Affinity\"; `.afdesign`, `.afpub`, `.afphoto` files; the Affinity SDK, Scripts panel, script library, or SDK hints; any `mcp__affinity__*` tool; or `NOT_ALLOWED` errors from the Affinity MCP. Covers anything done inside an open Affinity doc via JavaScript through MCP: creating Publisher books with bleed/page-count/facing settings, placing picture or text frames, importing PNGs onto pages, scripting guides and master pages, applying RGB/CMYK fills and strokes, manipulating selections, exporting PDFs/PNGs per-page or whole-book, debugging MCP permission errors, saving scripts to the library, searching SDK hints. If the user names Affinity or an Affinity file \u2014 even when the surface request sounds like generic scripting, layout, file I/O, or \"call some API from inside this open .afphoto\" \u2014 this skill owns it. Prefer over canva-design once a project has moved to Affinity.",
+      "train_passed": 6,
+      "train_failed": 7,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "render the current spread in my open Affinity doc so i can check if my last script actually worked \u2014 it claimed it placed three text frames but i don't trust it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I switched the P8 scrapbook factory from Canva to Affinity \u2014 can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarorsz\u00e1g ABC, ~72pt",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I'm building a frontend dashboard for design metrics \u2014 make it look polished, distinctive, not the usual AI-generic look",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "configure my .claude settings.json to allow gh commands without prompting on this machine",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add a CRM contact for Karim at Leonardo to my Affinity database \u2014 he's the one I'm reporting to about the 6-hour workday transition",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "results": [
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "description": "Use this skill for any Affinity Designer, Affinity Publisher, or Affinity Photo task. Trigger on: the word \"Affinity\"; the file extensions `.afdesign`, `.afpub`, `.afphoto`; any `mcp__affinity__*` tool; the Affinity SDK, Scripts panel, script library, or SDK hints; and `NOT_ALLOWED` errors from the Affinity MCP. Typical jobs: setting up Publisher books (size, bleed, pages, facing), placing picture/text frames, importing PNGs onto pages, scripting guides/master pages, applying RGB or CMYK fills/strokes, manipulating selections, exporting PDFs/PNGs per-page or whole-book, debugging MCP permission errors, saving scripts to the library, searching SDK hints, calling SDK APIs from inside a live Affinity doc. If the user names Affinity, an Affinity file, or describes scripting/layout/export work on a doc they've said is open in Affinity, use this skill \u2014 even when the surface task sounds like generic JavaScript, file I/O, or design work. Prefer over canva-design once a project has switched to Affinity.",
+      "train_passed": 6,
+      "train_failed": 7,
+      "train_total": 13,
+      "train_results": [
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 3,
+      "test_failed": 4,
+      "test_total": 7,
+      "test_results": [
+        {
+          "query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "render the current spread in my open Affinity doc so i can check if my last script actually worked \u2014 it claimed it placed three text frames but i don't trust it",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I switched the P8 scrapbook factory from Canva to Affinity \u2014 can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarorsz\u00e1g ABC, ~72pt",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I'm building a frontend dashboard for design metrics \u2014 make it look polished, distinctive, not the usual AI-generic look",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "configure my .claude settings.json to allow gh commands without prompting on this machine",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "add a CRM contact for Karim at Leonardo to my Affinity database \u2014 he's the one I'm reporting to about the 6-hour workday transition",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 7,
+      "total": 13,
+      "results": [
+        {
+          "query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign \u2014 guides at 20mm and 40mm from the top of every page, plus the page-centre vertical",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() \u2014 what's going on, am i holding it wrong?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later \u2014 it's the one we just got working that adds the cover title frame",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "I want to script some hatching in the open .afphoto file \u2014 call out to the rasterbrush API",
+          "should_trigger": true,
+          "trigger_rate": 0.3333333333333333,
+          "triggers": 1,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me \u2014 needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "design a logo for Ribbon \u2014 vector, two-tone, modern. should work on a dark background as well as light",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build me a quick chart showing Recraft credit usage over the last week \u2014 i'm worried we're burning through them too fast on the hungary book",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

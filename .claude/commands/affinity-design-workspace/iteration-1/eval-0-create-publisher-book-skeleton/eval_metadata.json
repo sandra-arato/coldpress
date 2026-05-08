@@ -1,0 +1,6 @@
+{
+  "eval_id": 0,
+  "eval_name": "create-publisher-book-skeleton",
+  "prompt": "I want to create the skeleton for a children's activity book in Affinity Publisher: A4 portrait, 38 pages, 3 mm bleed on all sides, and each page must export as its own PDF page (not facing pairs). Save it to my Desktop as `hungary-2026.afpub`. Walk me through what you'd do, and produce the actual JavaScript script you'd run via the Affinity MCP. Do not actually execute the script — just produce it as a file along with your plan and a verification plan.",
+  "assertions": []
+}

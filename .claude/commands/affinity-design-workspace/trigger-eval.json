@@ -1,0 +1,22 @@
+[
+  {"query": "in Affinity Publisher, set up a 38-page A4 portrait book with 3mm bleed for me — needs each page to be its own PDF page when exported, not facing pairs. save it on my desktop as hungary-2026.afpub", "should_trigger": true},
+  {"query": "place this PNG of the budapest skyline (it's on my Desktop as ~/Desktop/illustrations/budapest.png) into a picture frame on the current spread of my open .afpub file. center it on the page and apply 5mm bleed to the edges", "should_trigger": true},
+  {"query": "I switched the P8 scrapbook factory from Canva to Affinity — can you write the script to add the title text frame on page 1 of my hungary-2026 book? title is Magyarország ABC, ~72pt", "should_trigger": true},
+  {"query": "render the current spread in my open Affinity doc so i can check if my last script actually worked — it claimed it placed three text frames but i don't trust it", "should_trigger": true},
+  {"query": "the affinity MCP keeps spitting back NOT_ALLOWED when i try to write a PDF to disk via doc.exportAs() — what's going on, am i holding it wrong?", "should_trigger": true},
+  {"query": "search the Affinity SDK hints pool for how to apply a CMYK fill to the current selection without nuking my undo history", "should_trigger": true},
+  {"query": "i want to script a guide-line setup across all 38 spreads in my open .afdesign — guides at 20mm and 40mm from the top of every page, plus the page-centre vertical", "should_trigger": true},
+  {"query": "make me an A3 landscape poster in Affinity Designer with a deep red (#7a1e1e) background fill and a 30mm white margin all around", "should_trigger": true},
+  {"query": "iterate over every spread in the open Publisher document and stamp the page number in the bottom-outside corner. mirror odd/even pages.", "should_trigger": true},
+  {"query": "save this script to the Affinity script library so i can re-run it from the Scripts panel later — it's the one we just got working that adds the cover title frame", "should_trigger": true},
+  {"query": "I want to script some hatching in the open .afphoto file — call out to the rasterbrush API", "should_trigger": true},
+  {"query": "create a Canva presentation for our Q3 review with our brand kit applied, 8 slides, focus on the new pricing tier", "should_trigger": false},
+  {"query": "vectorize this PNG of a hungarian folk pattern and remove the white background. it's at ~/Desktop/research/folk-pattern.png", "should_trigger": false},
+  {"query": "add a CRM contact for Karim at Leonardo to my Affinity database — he's the one I'm reporting to about the 6-hour workday transition", "should_trigger": false},
+  {"query": "I'm building a frontend dashboard for design metrics — make it look polished, distinctive, not the usual AI-generic look", "should_trigger": false},
+  {"query": "design a logo for Ribbon — vector, two-tone, modern. should work on a dark background as well as light", "should_trigger": false},
+  {"query": "configure my .claude settings.json to allow gh commands without prompting on this machine", "should_trigger": false},
+  {"query": "open the .pen file for the Ribbon onboarding flow and screenshot the cart screen so i can paste it into the deck", "should_trigger": false},
+  {"query": "search my Canva folders for the Q4 launch deck and export it as PDF to my downloads", "should_trigger": false},
+  {"query": "build me a quick chart showing Recraft credit usage over the last week — i'm worried we're burning through them too fast on the hungary book", "should_trigger": false}
+]

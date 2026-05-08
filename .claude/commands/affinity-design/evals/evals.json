@@ -1,0 +1,26 @@
+{
+  "skill_name": "affinity-design",
+  "evals": [
+    {
+      "id": 0,
+      "name": "create-publisher-book-skeleton",
+      "prompt": "I want to create the skeleton for a children's activity book in Affinity Publisher: A4 portrait, 38 pages, 3 mm bleed on all sides, and each page must export as its own PDF page (not facing pairs). Save it to my Desktop as `hungary-2026.afpub`. Walk me through what you'd do, and produce the actual JavaScript script you'd run via the Affinity MCP. Do not actually execute the script — just produce it as a file along with your plan and a verification plan.",
+      "expected_output": "A plan, a JS script using NewDocumentOptions with isFacing:false and 3mm bleed, mm-to-px conversion via dpi/25.4, save to Desktop via app.getUserDesktopPath, plus a verification plan that calls render_spread on at least one spread.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "place-cover-title-frame",
+      "prompt": "I have a Publisher document open on spread 0 (the cover). I need a centred text frame near the top with the title 'Magyarország ABC' set in a Hungarian-friendly sans-serif at around 72 pt. After placing it, verify that the result matches what you intended. Produce the script(s) and verification plan as files. Do not actually execute anything via the MCP.",
+      "expected_output": "A script that checks current spread before setting it, builds the text frame via DocumentCommand.create* + executeCommand, and uses render_spread for verification. Should acknowledge that exact factory names need confirming in commands.js / story.js.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "export-each-page-as-pdf",
+      "prompt": "Export every page of the currently open Publisher book as a separate PDF file to my Desktop. Each file should be named `{bookname}-page-{1-based-index}.pdf`. Produce the script and explain how you'd handle errors (e.g. permissions denied). Do not execute anything via the MCP.",
+      "expected_output": "A script iterating spreads (since pageCount===spreadCount when isFacing:false), using ExportConfig + Document.export* per spread, writing to app.getUserDesktopPath. Error handling discusses NOT_ALLOWED → user enables filesystem perms in Affinity Scripting settings.",
+      "files": []
+    }
+  ]
+}

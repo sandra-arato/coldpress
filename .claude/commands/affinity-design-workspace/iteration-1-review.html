@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "affinity-design", "runs": [{"id": "eval-0-create-publisher-book-skeleton-with_skill", "prompt": "I want to create the skeleton for a children's activity book in Affinity Publisher: A4 portrait, 38 pages, 3 mm bleed on all sides, and each page must export as its own PDF page (not facing pairs). Save it to my Desktop as `hungary-2026.afpub`. Walk me through what you'd do, and produce the actual JavaScript script you'd run via the Affinity MCP. Do not actually execute the script \u2014 just produce it as a file along with your plan and a verification plan.", "eval_id": 0, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 uncertainties, fallbacks, things to confirm\n\n## SDK names I'm not 100% sure of (would confirm via discovery before running)\n\nThe cookbook gives a tested recipe shape, but a few exact identifiers vary by SDK version. Before execution I'd resolve these via `search_sdk_hints` first, then `read_sdk_documentation_topic` if hints are silent.\n\n| Symbol used in script | Confidence | What I'd confirm | Topic to read if hints don't cover it |\n|---|---|---|---|\n| `NewDocumentOptions.createDefault()` | High \u2014 straight from cookbook \u00a71 | That `createDefault` is the current factory (vs. `new NewDocumentOptions()` or a `Document.NewDocumentOptions` namespace). | `documentproperties.js` |\n| `opts.bleed = { left, top, right, bottom }` | Medium | Shape of the bleed property \u2014 could be `UnitValue` instances or a different field set (`bleedTop`, `bleedLeft`, \u2026). | `documentproperties.js` |\n| `opts.isMultiPage`, `opts.isFacing`, `opts.pageCount` | Medium-high | Exact spelling/case. SDK may use `multiPage`/`facing`/`pages`. | `documentproperties.js` |\n| `opts.createMaster`, `opts.createArtboard`, `opts.marginsEnabled` | Medium | These are convenience flags; if absent the doc just gets defaults \u2014 not load-bearing for the skeleton. Drop them rather than guess if discovery shows different names. | `documentproperties.js` |\n| `RasterFormat.RGBA8` | High | From `rasterobject.js` per topic-index. | `rasterobject.js` |\n| `UnitType.Millimetre` | High | British spelling matches the cookbook; UK-English Affinity convention. | `units.js` |\n| `Document.create(opts)` | High | Listed under `document.js` in the topic index. | `document.js` |\n| `doc.saveAs(path)` | Medium | Method may be `saveAs(path, format)` or take an options object; cookbook \u00a71 uses single-arg form. | `document.js` |\n| `app.getUserDesktopPath` | High \u2014 explicit in SKILL.md | Skill says it's a property; double-check it isn't a method (`getUserDesktopPath()`). | `application.js` |\n| `doc.sessionUuid` | Low-medium | SKILL.md says \"confirm the exact accessor by reading `document.js`\". I log it but render calls can fall back to whatever ID `Document.current` exposes. | `document.js` |\n\nIf any of these blow up at runtime, the failure mode is informative \u2014 log the error, read the relevant topic, fix, re-run.\n\n## Permissions I'd confirm with the user before running\n\nThe script needs **filesystem scripting permission** in Affinity \u2192 Preferences \u2192 Scripting. If it's off, `doc.saveAs(...)` returns `NOT_ALLOWED`. The skill rule is to surface this as a permission ask, not silently retry. I'd mention it once before sending the script, so the user can flip it pre-emptively.\n\nIt does **not** need AI or networking permissions for this task.\n\n## Things I'd confirm with Sandra before running\n\n1. **Filename.** She said `hungary-2026.afpub` \u2014 I'm using exactly that. If something on her Desktop already has that name, `saveAs` will silently overwrite it. Worth one sentence of \"okay to overwrite if it already exists?\" given how cheap the question is.\n2. **Bleed colour / paper colour.** Skeleton only, so I'm not setting either. Default Affinity paper colour is white. If she wants the cream/light editorial baseline (per P8 quality bar \u00a78), that's a follow-up step on the master page, not part of this skeleton.\n3. **Master page deferred.** I deliberately set `createMaster: false` because P8's editorial plan is locked separately and master decisions should follow the layout spec, not precede it. If she wanted a master at creation time, easy to flip.\n\n## Open questions / fallbacks\n\n- **If `isFacing: false` is rejected** (e.g. the SDK currently couples `isMultiPage` and `isFacing`) the fallback is to create the doc facing, then loop and call a `DocumentCommand.createSplitFacingPages` (or equivalent) per spread \u2014 but this is a known cookbook recipe and I'd be surprised. Hint search would catch this first.\n- **If `bleed` field shape is wrong**, fallback is to read `documentproperties.js`, build whatever shape it wants, and re-run. The doc creation is cheap and undoable.\n- **No save_script_to_library / add_sdk_hint until verification passes.** The SKILL.md rule is \"save once it works and the user is happy\" \u2014 those calls would come *after* the render checks, not as part of this run.\n\n## What I would not do\n\n- Not pre-place text frames, picture frames, or guides. Spec said skeleton.\n- Not export to PDF as part of this step. Export is a separate downstream task.\n- Not call `mcp__affinity__execute_script` in this eval \u2014 per the task instructions, the script is produced as a file only.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Create `hungary-2026.afpub` skeleton\n\n## Goal\nA4 portrait Affinity Publisher document, 38 pages, 3 mm bleed all sides, **each page exporting as its own PDF page** (i.e. non-facing), saved to `~/Desktop/hungary-2026.afpub`.\n\n## Skill sections consulted\n- `SKILL.md` \u2014 Critical rules (preamble first, hint search, `executeCommand` discipline, `NOT_ALLOWED` semantics, `isFacing:false` for one-page-per-spread, mm\u2192px conversion `mm * dpi / 25.4`, Desktop-only filesystem via `app.getUserDesktopPath`).\n- `references/cookbook.md` \u00a71 \"Create a multi-page Publisher book where each page exports independently\" \u2014 direct match for this task.\n- `references/topic-index.md` \u2014 `document.js`, `documentproperties.js`, `units.js`, `rasterobject.js`, `application.js`.\n\n## Discovery / MCP calls before executing the script\nMandatory and in order:\n\n1. `mcp__affinity__read_sdk_documentation_topic({ topic: \"preamble\" })` \u2014 required first call of the session. Picks up environment rules and any saved hints that may already cover this exact recipe.\n2. `mcp__affinity__search_sdk_hints({ query: \"create A4 multi-page Publisher document with bleed isFacing false saveAs Desktop\" })` \u2014 chances are high a prior session already nailed this; a hint may correct exact field names (`isMultiPage`, `isFacing`, `pageCount`, `bleed` shape) for the live SDK version.\n3. If the hint pool is silent on any of those property names, narrowly read:\n   - `mcp__affinity__read_sdk_documentation_topic({ topic: \"documentproperties.js\" })` \u2014 confirm `NewDocumentOptions` field names, the `bleed` shape (object vs `UnitValue`), and that `Document.create(opts)` is current.\n   - `mcp__affinity__read_sdk_documentation_topic({ topic: \"document.js\" })` \u2014 confirm `Document.create` and `doc.saveAs(path)` signatures.\n4. `mcp__affinity__list_sdk_documentation` only if step 3 leaves an unknown.\n\n## Order of operations\n1. Run discovery (above).\n2. Send `script.js` to `mcp__affinity__execute_script`. The script:\n   - builds `NewDocumentOptions` from the cookbook recipe with the user's spec (210\u00d7297 mm, 38 pp, 3 mm bleed, `isFacing:false`);\n   - calls `Document.create(opts)`;\n   - calls `doc.saveAs(<Desktop>/hungary-2026.afpub)`;\n   - logs `pageCount`, `spreadCount`, file path, and `sessionUuid` so verification can call `render_spread` against the right document.\n3. Capture the logged `sessionUuid` from the script output.\n4. Run verification renders (see `verification.md`).\n5. If geometry is right, finish. If reusable, call `save_script_to_library` and `add_sdk_hint` per skill rules.\n\n## Why this design\n- **`isFacing:false`** is the load-bearing decision: it makes `pageCount === spreadCount`, which is what \"each page exports as its own PDF page\" requires. Cookbook \u00a71 calls this out explicitly.\n- **mm\u2192px conversion** is the second load-bearing decision: `NewDocumentOptions.width/height` are in pixels even when `units = Millimetre`. Skipping this conversion produces a tiny ~210 px \u00d7 297 px doc.\n- **No master, no margins, no artboard**: the user asked for a skeleton, nothing more. We avoid editorialising; downstream agents will add masters and margins when the editorial plan calls for them.\n- **Single command, no `CompoundCommandBuilder`**: this is one mutation (`Document.create` + `saveAs`), not multi-step state changes inside an existing doc.\n"}, {"name": "script.js", "type": "text", "content": "'use strict';\n\n// Create a 38-page A4 portrait Affinity Publisher document with 3 mm bleed\n// on all sides, where each page is its own spread (so each page exports as\n// its own PDF page), and save it to the user's Desktop as\n// `hungary-2026.afpub`.\n//\n// Source: ./references/cookbook.md \u00a71 (P8 activity-book skill).\n// Verify after running with mcp__affinity__render_spread on spread 0 and 37.\n\nconst { Document, NewDocumentOptions } = require('/document');\nconst { UnitType } = require('/units');\nconst { RasterFormat } = require('/rasterobject');\nconst { app } = require('/application');\n\nfunction mmToPx(mm, dpi) {\n  return mm * dpi / 25.4;\n}\n\nfunction main() {\n  // --- spec ---------------------------------------------------------------\n  const dpi       = 300;\n  const widthMm   = 210;   // A4 portrait\n  const heightMm  = 297;\n  const pageCount = 38;\n  const bleedMm   = 3;\n  const fileName  = 'hungary-2026.afpub';\n  // -----------------------------------------------------------------------\n\n  const opts = NewDocumentOptions.createDefault();\n\n  // Units & resolution\n  opts.units   = UnitType.Millimetre;\n  opts.dpi     = dpi;\n  opts.viewDpi = dpi;\n\n  // Page size \u2014 width/height are in PIXELS even though units = mm.\n  // Skipping mmToPx here yields a 210 px \u00d7 297 px doc, not A4.\n  opts.width       = mmToPx(widthMm, dpi);\n  opts.height      = mmToPx(heightMm, dpi);\n  opts.isLandscape = false;\n\n  // Multi-page, one page per spread (so pageCount === spreadCount and\n  // each page exports as its own PDF page).\n  opts.isMultiPage = true;\n  opts.isFacing    = false;\n  opts.pageCount   = pageCount;\n\n  // 3 mm bleed on all sides; bleed is in document units (mm).\n  opts.bleed = { left: bleedMm, top: bleedMm, right: bleedMm, bottom: bleedMm };\n\n  // Skeleton only \u2014 no master pages, no margins, no Designer artboard.\n  opts.rasterFormat    = RasterFormat.RGBA8;\n  opts.marginsEnabled  = false;\n  opts.createMaster    = false;\n  opts.createArtboard  = false;\n\n  const doc = Document.create(opts);\n  if (!doc) {\n    alert('Failed to create document. Check Affinity scripting permissions.');\n    return;\n  }\n\n  // Filesystem access is Desktop-only via app.getUserDesktopPath.\n  // If the user has filesystem scripting disabled this will throw NOT_ALLOWED.\n  const path = app.getUserDesktopPath + '/' + fileName;\n  doc.saveAs(path);\n\n  // execute_script swallows return values; log everything we'll need to\n  // verify, including the session UUID so render_spread can target this doc.\n  console.log('created Publisher doc');\n  console.log('  path:         ', path);\n  console.log('  pageCount:    ', doc.pageCount);\n  console.log('  spreadCount:  ', doc.spreadCount);\n  console.log('  widthPixels:  ', doc.widthPixels);\n  console.log('  heightPixels: ', doc.heightPixels);\n  console.log('  dpi:          ', doc.dpi);\n  console.log('  sessionUuid:  ', doc.sessionUuid);\n}\n\nmodule.exports.main = main;\n"}, {"name": "verification.md", "type": "text", "content": "# Verification plan \u2014 `hungary-2026.afpub`\n\nThe script's success message is not enough; the skill rule is \"treat the rendered JPEG as the ground truth\". Verification splits in two: log-level sanity and visual confirmation.\n\n## 1. Log-level sanity (read from the `console.log` output of the run)\n\nExpect, in the captured stdout from `execute_script`:\n\n| Field | Expected | Why |\n|---|---|---|\n| `path` | `/Users/<user>/Desktop/hungary-2026.afpub` | Saved where requested. |\n| `pageCount` | `38` | Spec. |\n| `spreadCount` | `38` | Equal to pageCount \u2192 confirms `isFacing: false` worked. **If spreadCount is 20 (= 1 cover + 18 pairs + 1 back) the script silently created a facing book and must be re-run.** |\n| `widthPixels` | `2480` (\u00b11 for rounding) | 210 mm \u00d7 300 dpi / 25.4. |\n| `heightPixels` | `3508` (\u00b11 for rounding) | 297 mm \u00d7 300 dpi / 25.4. |\n| `dpi` | `300` | Spec. |\n| `sessionUuid` | non-empty string | Needed for the render calls below. |\n\nIf `pageCount !== spreadCount`, stop \u2014 the file is wrong, do not bother rendering.\n\n## 2. Visual checks via `mcp__affinity__render_spread`\n\nUse the `sessionUuid` from the log. Render four targeted spreads (cheap; each is one JPEG):\n\n```\nrender_spread({ document_session_uuid: <uuid>, spread_index: 0  })   // first page\nrender_spread({ document_session_uuid: <uuid>, spread_index: 1  })   // second page (sanity check pages aren't paired)\nrender_spread({ document_session_uuid: <uuid>, spread_index: 18 })   // mid-book\nrender_spread({ document_session_uuid: <uuid>, spread_index: 37 })   // last page (38th, 0-indexed)\n```\n\nFor each rendered JPEG, check:\n\n1. **Single page, not a pair.** The image should show one A4 portrait page, not two side-by-side. A side-by-side render means `isFacing` was not honoured \u2014 fail and re-run with `isFacing: false` confirmed against `documentproperties.js`.\n2. **Aspect ratio \u2248 0.707 (210/297).** Visibly portrait, not square or landscape.\n3. **3 mm bleed visible.** A faint coloured strip outside the trim on all four edges (Affinity's default bleed colour). At 300 dpi, 3 mm is ~35 px in document space \u2014 should be unmistakable in the render.\n4. **Empty page.** No leftover guides, master content, margin guides, or text. Skeleton only.\n5. **Spread index 37 exists and renders.** Confirms the document has 38 spreads, not 37 or 39.\n\n## 3. Optional disk check (only if user later asks)\n\nIf the user wants disk-level confirmation, run a tiny follow-up script that calls `console.log(Document.current.fileName, Document.current.fileExists)` (exact accessor name to be confirmed in `document.js`). Not required for this task \u2014 `saveAs` succeeded if no exception was thrown and the doc has a path.\n\n## What counts as \"wrong\" \u2192 iterate\n\n- `spreadCount !== 38` \u2192 wrong facing setting. Re-check `isFacing` and re-run.\n- Page dimensions \u2260 ~2480 \u00d7 3508 px \u2192 mm/px conversion didn't run; check `mmToPx` was applied to both `width` and `height`.\n- No bleed visible in render \u2192 `opts.bleed` was ignored or wrong shape. Read `documentproperties.js` for the exact `bleed` type (it may need to be `UnitValue` per side rather than a plain number).\n- File not on Desktop \u2192 `NOT_ALLOWED` from filesystem permission. Ask user to enable Affinity \u2192 Preferences \u2192 Scripting \u2192 Filesystem and re-run.\n- Saved as `.afdesign` or untitled \u2192 `saveAs` extension/path argument needs adjusting; confirm the exact `Document.saveAs` signature in `document.js`.\n"}], "grading": null}, {"id": "eval-0-create-publisher-book-skeleton-without_skill", "prompt": "I want to create the skeleton for a children's activity book in Affinity Publisher: A4 portrait, 38 pages, 3 mm bleed on all sides, and each page must export as its own PDF page (not facing pairs). Save it to my Desktop as `hungary-2026.afpub`. Walk me through what you'd do, and produce the actual JavaScript script you'd run via the Affinity MCP. Do not actually execute the script \u2014 just produce it as a file along with your plan and a verification plan.", "eval_id": 0, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 uncertainties and questions before running\n\nI wrote `script.js` from general knowledge of the Affinity JavaScript scripting API. The script defends against API-shape variation by trying multiple property/method names, but several things are genuinely uncertain. I'd want answers (or at least a quick read of the SDK preamble) before executing.\n\n## High-uncertainty items\n\n1. **Exact API names.** The Affinity Publisher JS SDK is not as widely documented as, say, Adobe ExtendScript. I'm not 100% confident about:\n   - Whether new documents are created via `app.documents.add(preset)`, `app.createDocument(preset)`, or `app.newDocument(preset)`.\n   - Whether bleed is `doc.bleed.{top,bottom,left,right}`, `doc.setBleed(...)`, or lives on a `doc.spreadSetup` / `doc.documentSetup` object.\n   - Whether the facing-pages flag is `doc.facingPages`, `doc.spreadSetup.facingPages`, or controlled via a different \"single page mode\" boolean.\n   - Whether `saveAs` accepts a string path or requires a `File`-like object.\n\n   The script tries each plausible shape in turn and logs which one worked. Worst case, it fails fast with a readable error rather than producing a silently-wrong document. **Mitigation:** read the Affinity MCP preamble + relevant topics before running for real.\n\n2. **Colour space.** I assumed CMYK because this is destined for print. If the user is doing home printing on an inkjet, sRGB might actually be better. Worth a one-line confirmation.\n\n3. **Resolution / DPI.** I set 300 DPI in the preset. That's the right default for print but not load-bearing for a skeleton \u2014 it can be changed later. Flagging only because it's in the script.\n\n4. **Bleed-only, no slug.** I'm assuming the user wants bleed but no slug area. Affinity supports both. If the print shop wants a slug, that's a separate setting.\n\n5. **No margins set.** The user said \"skeleton\", so I left margins at the Affinity default (usually 12.7 mm or so). The Designer sub-agent will likely override these per-page anyway. If the user wants a specific margin baked into the master page now, this script doesn't do that.\n\n6. **Master pages.** The script does not create or touch master pages. Affinity Publisher gives you a default \"A-Master\" automatically. That's probably what the user wants from a skeleton, but worth confirming.\n\n7. **`~` expansion in paths.** Some Affinity script hosts expand `~`, some don't. The script prefers `app.userHomeDirectory` if available and falls back to a literal `~/Desktop/...`. If the fallback fires on a host that doesn't expand `~`, the save will land somewhere unexpected (or fail). **Mitigation:** if running on a host without `app.userHomeDirectory`, hardcode the absolute path `/Users/alexandraszenti/Desktop/hungary-2026.afpub` before executing.\n\n## Questions I'd ask the user before executing\n\n1. CMYK or sRGB document colour space?\n2. Margins \u2014 leave at Affinity default, or set something specific (e.g. 12 mm all sides)?\n3. Should the skeleton already have a one-page master applied, or stay at the bare \"A-Master\" default?\n4. If a file already exists at `~/Desktop/hungary-2026.afpub`, overwrite or rename? (The script as written would overwrite \u2014 `saveAs` to an existing path typically replaces it without prompting in scripted contexts.)\n5. Any chance you want the script to also create the per-section `assets/`, `drafts/layouts/` etc. folders, or is that already handled elsewhere in the P8 pipeline?\n\n## Things I deliberately didn't put in the script\n\n- **No `app.preflight()` / preflight checks.** Skeleton has no content, so preflight would just be noise.\n- **No PDF export.** User asked for the `.afpub` skeleton only.\n- **No version bumping / git hand-off.** Out of scope.\n- **No undo wrapper / transaction.** Affinity scripting usually wraps in an undo step automatically, and we're creating a fresh document anyway \u2014 nothing to roll back to.\n\n## How I'd de-risk before running\n\n1. First MCP call: `mcp__affinity__read_sdk_documentation_topic` with topic `preamble`.\n2. Second: list available SDK doc topics via `mcp__affinity__list_sdk_documentation` \u2014 pull the ones for `document`, `bleed`, `pages`, `save`.\n3. Patch `script.js` to use the confirmed exact names rather than the try-each-shape fallbacks.\n4. Run on a throwaway path first (e.g. `/tmp/skeleton-test.afpub`), verify with the steps in `verification.md`, then re-run with the real Desktop path.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Affinity Publisher Skeleton for `hungary-2026`\n\n## Goal\n\nCreate an empty but correctly-configured Affinity Publisher document that serves as the skeleton for the `hungary-2026` children's activity book, then save it to the user's Desktop.\n\n## Target document properties\n\n| Property | Value |\n|---|---|\n| File | `~/Desktop/hungary-2026.afpub` |\n| App | Affinity Publisher 2 |\n| Page size | A4 (210 mm \u00d7 297 mm) |\n| Orientation | Portrait |\n| Page count | 38 |\n| Bleed | 3 mm on all four sides (top, bottom, left, right) |\n| Facing pages | **Off** \u2014 each page is a single page, not part of a spread. This is the key requirement so PDF export produces 38 individual PDF pages rather than 19 facing-page spreads. |\n| Units | Millimetres (matches A4 / bleed spec) |\n| Document colour space | CMYK (print target) \u2014 assumption; flagged in `notes.md` |\n\n## Approach\n\n1. **Confirm the Affinity MCP is connected.** Before running anything, the operator (or the calling agent) should verify `mcp__affinity__*` tools respond. If they don't, stop \u2014 this script is useless without the bridge.\n\n2. **Read the SDK preamble.** The Affinity MCP server's instructions explicitly say \"You MUST read the 'preamble' documentation before using the SDK.\" Before executing any script for real, the calling agent should pull the preamble via `mcp__affinity__read_sdk_documentation_topic` (topic name typically `preamble` or similar) to confirm the exact API names for document creation, bleed configuration, and the facing-pages flag. The script in `script.js` is written from general knowledge of the Affinity JS SDK and may need small naming adjustments after reading the preamble.\n\n3. **Create the document via script.** Use the Affinity Publisher JavaScript API to:\n   - Construct an A4 portrait document with 38 pages.\n   - Set facing-pages off.\n   - Set 3 mm bleed on all four sides.\n   - Set units to millimetres.\n   - Save as `.afpub` to `~/Desktop/hungary-2026.afpub`.\n\n4. **Do not lay anything out.** No master pages, no text frames, no picture frames, no styles. The user asked for a skeleton; downstream agents (Designer sub-agent, Canva-equivalent producer) will populate it.\n\n5. **Verify.** Open the saved file (or query the document state via the MCP) and confirm the page count, page size, bleed values, and facing-pages flag match. See `verification.md`.\n\n## What I'm deliberately not doing\n\n- Not generating cover spreads, master pages, or section markers \u2014 out of scope for \"skeleton\".\n- Not setting up colour swatches, paragraph styles, or grids \u2014 out of scope.\n- Not exporting to PDF \u2014 the user only asked for the `.afpub` skeleton. PDF export is mentioned only as the *future* requirement that drives the facing-pages-off decision.\n- Not executing the script \u2014 explicitly out of scope per the task.\n\n## Open questions (see `notes.md`)\n\n- Exact SDK method names for setting bleed and facing-pages \u2014 best-effort from general knowledge; should be confirmed against the Affinity MCP preamble before running.\n- Document colour space (CMYK vs RGB) \u2014 assumed CMYK for print. Should be confirmed with the user.\n- Whether the user wants margins set now (e.g. 12 mm) or left at 0 for the Designer sub-agent to define per-page.\n"}, {"name": "script.js", "type": "text", "content": "/**\n * hungary-2026 \u2014 Affinity Publisher skeleton\n *\n * Creates an empty A4 portrait Publisher document with:\n *   - 38 pages\n *   - 3 mm bleed on all four sides\n *   - Facing pages OFF (each page is its own page \u2192 exports as 38 single PDF pages)\n *   - Units in millimetres\n *\n * Saves to: ~/Desktop/hungary-2026.afpub\n *\n * Run via the Affinity MCP (mcp__affinity__execute_script) targeting Affinity Publisher.\n *\n * NOTE: Affinity's JS scripting API surface differs slightly between versions and\n * between Designer/Publisher/Photo. Method names below reflect the public Publisher\n * scripting model as I understand it; if any of `app.documents.add`,\n * `document.spread.facingPages`, or `document.bleed` differ in this build, adjust\n * after consulting the SDK preamble (mcp__affinity__read_sdk_documentation_topic).\n *\n * Two paths are provided:\n *   1) Preferred: a single createDocument call that takes a full preset object.\n *   2) Fallback: create a default doc, then mutate page count / bleed / facing flag.\n *\n * The script runs path (1); if it throws, it falls back to path (2).\n */\n\n(function () {\n  // ---- Constants -----------------------------------------------------------\n  var MM = 1; // Affinity's JS API typically accepts numeric units in the document's unit;\n              // we set the document unit to mm before any size-dependent ops.\n\n  var PAGE_WIDTH_MM  = 210;   // A4 portrait width\n  var PAGE_HEIGHT_MM = 297;   // A4 portrait height\n  var PAGE_COUNT     = 38;\n  var BLEED_MM       = 3;\n  var DEST_PATH      = (function () {\n    // Resolve ~/Desktop. The Affinity scripting host runs as the desktop user,\n    // so $HOME is reliable; if `app.userHomeDirectory` exists, prefer it.\n    if (typeof app !== \"undefined\" && app.userHomeDirectory) {\n      return app.userHomeDirectory + \"/Desktop/hungary-2026.afpub\";\n    }\n    return \"~/Desktop/hungary-2026.afpub\";\n  })();\n\n  // ---- Helpers -------------------------------------------------------------\n  function log(msg) {\n    if (typeof console !== \"undefined\" && console.log) console.log(\"[hungary-2026 skeleton] \" + msg);\n  }\n\n  function setBleedAllSides(doc, mm) {\n    // Try the most likely API shapes in order. The first one that exists wins.\n    if (doc.bleed && typeof doc.bleed.setAll === \"function\") {\n      doc.bleed.setAll(mm);\n      return \"doc.bleed.setAll\";\n    }\n    if (doc.bleed && typeof doc.bleed === \"object\" &&\n        \"top\" in doc.bleed && \"bottom\" in doc.bleed &&\n        \"left\" in doc.bleed && \"right\" in doc.bleed) {\n      doc.bleed.top = mm;\n      doc.bleed.bottom = mm;\n      doc.bleed.left = mm;\n      doc.bleed.right = mm;\n      return \"doc.bleed.{top,bottom,left,right}\";\n    }\n    if (typeof doc.setBleed === \"function\") {\n      doc.setBleed(mm, mm, mm, mm);\n      return \"doc.setBleed(t,b,l,r)\";\n    }\n    throw new Error(\"Could not find a bleed-setting API on the document.\");\n  }\n\n  function setFacingPagesOff(doc) {\n    // Affinity Publisher exposes facing pages on the document or on its spread setup.\n    if (\"facingPages\" in doc) {\n      doc.facingPages = false;\n      return \"doc.facingPages = false\";\n    }\n    if (doc.spreadSetup && \"facingPages\" in doc.spreadSetup) {\n      doc.spreadSetup.facingPages = false;\n      return \"doc.spreadSetup.facingPages = false\";\n    }\n    if (typeof doc.setFacingPages === \"function\") {\n      doc.setFacingPages(false);\n      return \"doc.setFacingPages(false)\";\n    }\n    throw new Error(\"Could not find a facing-pages API on the document.\");\n  }\n\n  function ensurePageCount(doc, target) {\n    var current = (doc.pages && typeof doc.pages.length === \"number\")\n      ? doc.pages.length\n      : (typeof doc.pageCount === \"number\" ? doc.pageCount : null);\n\n    if (current === null) {\n      throw new Error(\"Could not determine current page count.\");\n    }\n\n    while (current < target) {\n      if (doc.pages && typeof doc.pages.add === \"function\") {\n        doc.pages.add();\n      } else if (typeof doc.addPage === \"function\") {\n        doc.addPage();\n      } else {\n        throw new Error(\"No API to add pages.\");\n      }\n      current += 1;\n    }\n    while (current > target) {\n      if (doc.pages && typeof doc.pages.removeAt === \"function\") {\n        doc.pages.removeAt(current - 1);\n      } else if (typeof doc.removePage === \"function\") {\n        doc.removePage(current - 1);\n      } else {\n        throw new Error(\"No API to remove pages.\");\n      }\n      current -= 1;\n    }\n    return current;\n  }\n\n  function setUnitsMm(doc) {\n    // Try a few shapes \u2014 unit constants vary by build.\n    var UNIT_MM =\n      (typeof Units !== \"undefined\" && Units.Millimeters) ? Units.Millimeters :\n      (typeof Unit  !== \"undefined\" && Unit.Millimeter)   ? Unit.Millimeter   :\n      \"mm\";\n    if (\"units\" in doc) {\n      doc.units = UNIT_MM;\n      return \"doc.units\";\n    }\n    if (typeof doc.setUnits === \"function\") {\n      doc.setUnits(UNIT_MM);\n      return \"doc.setUnits\";\n    }\n    // Non-fatal \u2014 falling back silently to default.\n    return \"no-unit-api\";\n  }\n\n  // ---- Path 1: preset-based creation --------------------------------------\n  function createWithPreset() {\n    var preset = {\n      type: \"publisher\",            // app target hint\n      width: PAGE_WIDTH_MM,\n      height: PAGE_HEIGHT_MM,\n      units: \"mm\",\n      orientation: \"portrait\",\n      pageCount: PAGE_COUNT,\n      facingPages: false,\n      bleed: { top: BLEED_MM, bottom: BLEED_MM, left: BLEED_MM, right: BLEED_MM },\n      colorSpace: \"CMYK\",           // assumption \u2014 see notes.md\n      dpi: 300\n    };\n\n    // Most likely entry points, tried in order.\n    if (app.documents && typeof app.documents.add === \"function\") {\n      return app.documents.add(preset);\n    }\n    if (typeof app.createDocument === \"function\") {\n      return app.createDocument(preset);\n    }\n    if (typeof app.newDocument === \"function\") {\n      return app.newDocument(preset);\n    }\n    throw new Error(\"No known createDocument entry point on `app`.\");\n  }\n\n  // ---- Path 2: create + mutate fallback -----------------------------------\n  function createThenMutate() {\n    var doc;\n    if (app.documents && typeof app.documents.add === \"function\") {\n      doc = app.documents.add({\n        width: PAGE_WIDTH_MM,\n        height: PAGE_HEIGHT_MM,\n        units: \"mm\",\n        orientation: \"portrait\"\n      });\n    } else if (typeof app.newDocument === \"function\") {\n      doc = app.newDocument();\n    } else {\n      throw new Error(\"No fallback document creation API available.\");\n    }\n\n    setUnitsMm(doc);\n    log(\"facingPages: \" + setFacingPagesOff(doc));\n    log(\"bleed:       \" + setBleedAllSides(doc, BLEED_MM));\n    log(\"pageCount:   \" + ensurePageCount(doc, PAGE_COUNT));\n    return doc;\n  }\n\n  // ---- Save ---------------------------------------------------------------\n  function saveAs(doc, path) {\n    if (typeof doc.saveAs === \"function\") {\n      doc.saveAs(path);\n      return \"doc.saveAs\";\n    }\n    if (app.documents && typeof app.documents.saveAs === \"function\") {\n      app.documents.saveAs(doc, path);\n      return \"app.documents.saveAs\";\n    }\n    if (typeof doc.save === \"function\") {\n      // Last resort \u2014 may save to the doc's existing path, not ours.\n      doc.save();\n      return \"doc.save (warning: path may be ignored)\";\n    }\n    throw new Error(\"No save-as API found.\");\n  }\n\n  // ---- Main ---------------------------------------------------------------\n  var doc;\n  try {\n    log(\"Trying preset-based creation\u2026\");\n    doc = createWithPreset();\n    setUnitsMm(doc);\n    // Even when using a preset, re-apply the critical flags to be defensive \u2014\n    // some builds silently ignore preset fields.\n    try { setFacingPagesOff(doc); } catch (e) { log(\"facingPages re-apply skipped: \" + e.message); }\n    try { setBleedAllSides(doc, BLEED_MM); } catch (e) { log(\"bleed re-apply skipped: \" + e.message); }\n    try { ensurePageCount(doc, PAGE_COUNT); } catch (e) { log(\"pageCount re-apply skipped: \" + e.message); }\n  } catch (presetErr) {\n    log(\"Preset path failed (\" + presetErr.message + \"), falling back\u2026\");\n    doc = createThenMutate();\n  }\n\n  log(\"saveAs via: \" + saveAs(doc, DEST_PATH));\n  log(\"Saved skeleton to: \" + DEST_PATH);\n\n  // Return a structured result the MCP can surface to the caller.\n  return {\n    ok: true,\n    path: DEST_PATH,\n    pages: PAGE_COUNT,\n    pageSize: { width: PAGE_WIDTH_MM, height: PAGE_HEIGHT_MM, units: \"mm\" },\n    bleedMm: BLEED_MM,\n    facingPages: false\n  };\n})();\n"}, {"name": "verification.md", "type": "text", "content": "# Verification Plan\n\nAfter running `script.js`, the skeleton must satisfy six things. Verify them in this order \u2014 earlier failures invalidate later checks.\n\n## 1. File exists at the right path\n\n- Check `~/Desktop/hungary-2026.afpub` is present.\n- Bash: `ls -la ~/Desktop/hungary-2026.afpub`.\n- Expected: file exists, non-zero size (typically a few hundred KB for an empty 38-page Publisher doc).\n\n## 2. File opens cleanly in Affinity Publisher\n\n- Re-open it via the Affinity MCP (`mcp__affinity__execute_script` with a script that calls `app.openDocument(path)` and reports the active document properties), **or** open by hand in Publisher.\n- Expected: opens with no migration / repair dialog, no missing-resource warnings.\n\n## 3. Document properties match spec\n\nRun a verification script via the MCP that introspects the open document and prints:\n\n| Property | Expected |\n|---|---|\n| `doc.pageCount` (or `doc.pages.length`) | `38` |\n| Page width  | `210 mm` |\n| Page height | `297 mm` |\n| Orientation | portrait |\n| `doc.facingPages` (or `doc.spreadSetup.facingPages`) | `false` |\n| Bleed top / bottom / left / right | `3 mm` each |\n| Units | mm |\n\nAny mismatch \u2192 stop and re-run with corrected API names from the SDK preamble.\n\n## 4. Visual sanity check in the Publisher UI\n\nOpen the Pages panel. Confirm:\n\n- Pages are rendered as a **single column of single pages**, not as facing-page spreads with a spine in the middle.\n- Page thumbnails count to 38.\n- File \u2192 Document Setup \u2192 Bleed shows `3 mm` on all four edges.\n- File \u2192 Document Setup \u2192 \"Facing Pages\" checkbox is **unchecked**.\n\nThis UI check is the load-bearing one for the user's actual requirement (each page exporting as its own PDF page).\n\n## 5. PDF-export smoke test (optional but recommended)\n\nThe user's stated reason for facing-pages-off is \"each page must export as its own PDF page\". Worth a one-shot proof:\n\n- Export to PDF (any preset) via `File \u2192 Export` or `mcp__affinity__execute_script` calling the export API.\n- Open the exported PDF.\n- Expected: **38 PDF pages**, each 216 \u00d7 303 mm (A4 + 3 mm bleed all sides) or 210 \u00d7 297 mm if the export preset trims bleed.\n- If you see 19 spreads (each ~420 \u00d7 297 mm), facing-pages is still on \u2014 the script didn't take.\n\n## 6. Round-trip safety\n\n- Close the file.\n- Re-open it.\n- Re-check property #3.\n- Expected: properties survive the save/close/reopen cycle. Catches the case where a property was set on the in-memory document but not persisted by `saveAs`.\n\n## What \"pass\" looks like\n\nAll six checks pass \u2192 ship the skeleton to the Designer sub-agent.\nAny check fails \u2192 return to `script.js`, fix the offending API call after consulting the Affinity MCP SDK preamble (`mcp__affinity__read_sdk_documentation_topic` with topic `preamble`, then targeted topics like `document`, `bleed`, `pages`).\n"}], "grading": null}, {"id": "eval-1-place-cover-title-frame-with_skill", "prompt": "I have a Publisher document open on spread 0 (the cover). I need a centred text frame near the top with the title 'Magyarorsz\u00e1g ABC' set in a Hungarian-friendly sans-serif at around 72 pt. After placing it, verify that the result matches what you intended. Produce the script(s) and verification plan as files. Do not actually execute anything via the MCP.", "eval_id": 1, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 uncertainties and what to confirm\n\nThese are the things I'm **not** certain about. None of them are bluffed \u2014\neach lists the topic file (or hint search) I would actually open to lock the\nanswer before running the script for real.\n\n## SDK factory & module names\n\n### 1. `DocumentCommand.createAddTextFrame(rect, string)`\n- **Where it came from in my script:** the cookbook's recipe 3 lists this as\n  the likely shape, but explicitly flags it as needing confirmation.\n- **Confirm via:** `read_sdk_documentation_topic(\"commands.js\")`, grep for\n  `TextFrame`. Likely candidates if this exact name is wrong:\n  `createAddTextFrame`, `createInsertTextFrame`, `createAddPointTextFrame`\n  (point text vs frame text \u2014 I want frame text), `createAddArtisticText`\n  (Designer-style, probably wrong for Publisher).\n- **Cheaper first stop:** `search_sdk_hints(\"add text frame to spread with string content\")`.\n\n### 2. How the just-added frame is addressed by the next command\n- **Where it came from:** I used `addCmd.resultId` as the target of\n  `createSetCharacterAttributes` / `createSetParagraphAttributes`. The skill\n  cookbook doesn't specify how Affinity's command builder exposes the result\n  of a previous command \u2014 could be `.resultId`, `.resultNode`, `.id`, or\n  there may be no result handle at all (in which case the new frame must be\n  selected via `Selection` after the add command commits).\n- **Confirm via:** `read_sdk_documentation_topic(\"tests/storyTests.js\")` and\n  `read_sdk_documentation_topic(\"tests/documentCommandTests.js\")`. The tests\n  show the canonical \"add a frame, then style its text\" pattern.\n- **If `resultId` is wrong:** likely fix is to split into two `executeCommand`\n  calls \u2014 first the add (which leaves the frame selected), then read\n  `doc.selection` to get the new node, then a second compound for the\n  attribute sets. The \"wraps as one undo\" property is lost; document that\n  trade-off if so.\n\n### 3. `DocumentCommand.createSetCharacterAttributes` / `createSetParagraphAttributes`\n- **Confirm via:** `commands.js` (search `createSet`) + `glyphatts.js` /\n  `paragraphatts.js`. The `null` range argument I used (whole-story shorthand)\n  is also a guess \u2014 the real signature may require an explicit range built via\n  a `Range` factory in `story.js`.\n\n### 4. `GlyphAtts.createDefault()` and `GlyphAtts.fontFamily` / `.fontSize`\n- **Confirm via:** `glyphatts.js`. The shape of `GlyphAtts` is not in the\n  cookbook. Possible alternatives: a builder pattern (`GlyphAtts.builder()`),\n  a struct literal (`{ fontFamily, fontSize }`), or named setters\n  (`atts.setFontFamily(\"\u2026\")`).\n\n### 5. `ParagraphAtts.createDefault()` and `ParagraphAlignment.Centre`\n- **Confirm via:** `paragraphatts.js`. The enum could be:\n  - `ParagraphAlignment.Centre` (UK spelling \u2014 Affinity is a UK product, so\n    this is my best guess)\n  - `ParagraphAlignment.Center` (US spelling)\n  - A numeric constant\n  - A string `\"centre\"` / `\"center\"`\n\n### 6. `Fonts.find(name)`\n- **Confirm via:** `read_sdk_documentation_topic(\"fonts.js\")`. The accessor\n  for \"look up a font by family/PostScript name\" is almost certainly\n  documented there. It might be `Fonts.lookup`, `Fonts.byName`, `Fonts.find`,\n  or require a more explicit `Fonts.findFamily(name).regular()` chain.\n  Worst case: just set `glyph.fontFamily` to the string name and let the SDK\n  resolve.\n\n### 7. `doc.sessionUuid`\n- **Where it came from:** the skill's \"Visual verification\" section says\n  *\"Get the `document_session_uuid` from the SDK (e.g. `Document.current.sessionUuid`\n  \u2014 confirm the exact accessor by reading `document.js`)\"*. So this is\n  flagged as needing confirmation upstream too.\n- **Confirm via:** `read_sdk_documentation_topic(\"document.js\")`, grep\n  `session` / `uuid`. Could also be `doc.uuid`, `doc.id`, or exposed as a\n  property on `app` rather than `Document`.\n\n## Layout uncertainties\n\n### 8. \"Near the top\" \u2014 y = 30 mm\n- **Choice:** 30 mm below the page's top trim. With a 30 mm-tall frame, the\n  visual centre of the title sits at ~45 mm from the top (\u224815 % of the page).\n  That reads as \"near the top\" without being jammed against the bleed.\n- **Alternatives considered:**\n  - 20 mm (tighter to the top \u2014 riskier with a 3 mm bleed; only 17 mm of\n    safe-area gap above the title).\n  - 50 mm (more breathing room, but risks dropping into the upper-third\n    sweet-spot rather than reading as \"near the top\").\n- **Override mechanism:** if the user disagrees once they see the render,\n  bump `topMm` and re-run.\n\n### 9. Frame width \u2014 170 mm\n- **Choice:** 170 mm leaves 20 mm gutter each side on a 210 mm page.\n- **Risk:** if the chosen font is wider than Helvetica Neue (e.g. Arial Black\n  or a serif fallback), the title might wrap. The verification render is the\n  catch \u2014 if it wraps, widen to 180 mm or step the size down to 64 pt.\n\n### 10. \"Centred\" interpretation\n- **Choice:** centred *both* on the page (frame x = `(pageW - frameW)/2`)\n  *and* inside the frame (paragraph alignment = centre). Both feel\n  necessary \u2014 the user said \"centred text frame\", which to me reads as both.\n- **If only the frame should be page-centred and the text left-flushed inside:**\n  drop the paragraph alignment command. Cheap to revise.\n\n## Hungarian glyphs \u2014 am I sure about font coverage?\n\n`Helvetica Neue` and `Arial` (both bundled with macOS for years) ship with\nfull Latin Extended-A coverage including `\u00e1 \u00e9 \u00ed \u00f3 \u00f6 \u0151 \u00fa \u00fc \u0171`. I'm confident\non this without further confirmation; the verification render will catch any\nsubstitution as boxes or `?` characters anyway. If both somehow fail, the\ncandidate list in the script falls through to `SF Pro Text` (also Apple-shipped,\nalso covers Hungarian) and `Inter` (open-source, broad coverage).\n\n## Things I deliberately am NOT doing\n\n- Not reading `nodes.js` (~176 KB) \u2014 too expensive and the text-frame add path\n  goes through `commands.js`, not direct node manipulation.\n- Not preloading `tests/useCases.js` \u2014 only fall back to it if the targeted\n  topic files don't answer.\n- Not writing a font into the document via the filesystem. The user said\n  \"Hungarian-friendly sans-serif\" \u2014 I'm trusting the system fonts, not\n  embedding a custom one.\n- Not saving the document. The task is \"place a frame and verify\", not \"ship\".\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Place centred cover title \"Magyarorsz\u00e1g ABC\"\n\n## Goal\n\nOn spread 0 (cover) of the currently-open Publisher document, place a single text\nframe containing the title **\"Magyarorsz\u00e1g ABC\"**, set in a Hungarian-friendly\nsans-serif at ~72 pt, horizontally centred, positioned near the top of the page.\nAfter placing it, render the spread and visually verify the result matches intent.\n\n## Approach\n\nFollow the affinity-design skill's core loop: **Discover \u2192 Plan \u2192 Execute \u2192 Verify**.\nDo not skip the verification step \u2014 `execute_script` swallows return values, and a\nscript can succeed silently while producing the wrong layout.\n\n### Discovery calls (in order)\n\nThese are the MCP calls I'd issue **before** writing the final script. Each one\nnarrows the API surface so the script can use exact factory names rather than\nguessed ones.\n\n1. **`read_sdk_documentation_topic(\"preamble\")`** \u2014 mandatory once per session.\n   Carries environment rules (filesystem/AI gating, current-spread semantics,\n   coordinate-unit gotchas) and accumulated hints from prior sessions. Some of\n   these are decisive: e.g. the warning that `getSpreadExtents()` is in\n   spread-internal units, not document pixels.\n\n2. **`search_sdk_hints(\"place centred text frame on spread with font and point size\")`** \u2014\n   the hint pool is shared across sessions; someone has almost certainly already\n   solved \"add a text frame, set its font, set its size\" and the hint will name\n   the exact `DocumentCommand.create*` factories. This is cheaper than reading\n   `commands.js` (~93 KB) cold.\n\n3. **`search_sdk_hints(\"Hungarian diacritics font Affinity\")`** \u2014 confirms which\n   bundled fonts on macOS reliably render \u00e9, \u00e1, \u00f3, \u0171, \u0151. Probably no hit, but\n   worth one shot.\n\n4. **`list_sdk_documentation`** \u2014 to confirm topic filenames before reading them.\n\n5. **`read_sdk_documentation_topic(\"commands.js\")`** \u2014 grep for `createAddTextFrame`,\n   `createSetFont`, `createSetTextRange*`, character-attribute setters. The\n   cookbook's recipe 3 names `DocumentCommand.createAddTextFrame(rect, \"...\")`\n   as a likely candidate but flags it as needing confirmation.\n\n6. **`read_sdk_documentation_topic(\"storybuilder.js\")`** + **`story.js`** \u2014 text in\n   Affinity lives in \"stories\"; setting font/size after frame creation usually\n   means addressing a text range inside the story, not the frame node directly.\n   `StoryBuilder` is the composition primitive.\n\n7. **`read_sdk_documentation_topic(\"fonts.js\")`** \u2014 how to look up a font by\n   PostScript or family name (e.g. `Fonts.find(\"Helvetica Neue\")` or similar).\n   Needed so the script asks for a font that actually exists on the user's\n   machine.\n\n8. **`read_sdk_documentation_topic(\"paragraphatts.js\")`** + **`glyphatts.js`** \u2014\n   structures for paragraph alignment (centre) and character attributes\n   (font family, size). I expect to set:\n   - `ParagraphAtts.alignment = Centre`\n   - `GlyphAtts.fontSize = 72`\n   - `GlyphAtts.fontFamily = \"<chosen Hungarian-friendly sans>\"`\n\n9. **`read_sdk_documentation_topic(\"geometry.js\")`** \u2014 confirm `Rect.createXYWH`\n   signature and unit expectations (document pixels). Already used in the\n   cookbook; just sanity-check.\n\n10. (Fallback) **`read_sdk_documentation_topic(\"tests/storyTests.js\")`** if the\n    reference files leave the \"set font on a text frame I just created\" pattern\n    ambiguous. The test suite usually shows the canonical idiom.\n\n### Position & size decisions\n\n- **Document assumption:** Publisher A4 portrait (210 \u00d7 297 mm) at 300 dpi, per\n  the locked P8 `hungary-2026` spec. Spread 0 is the cover (single page,\n  `isFacing: false`).\n- **Page width in document px:** `210 * 300 / 25.4 \u2248 2480 px`.\n- **Page height in document px:** `297 * 300 / 25.4 \u2248 3508 px`.\n- **Frame width:** 170 mm = `170 * 300 / 25.4 \u2248 2008 px`. Generous enough that\n  \"Magyarorsz\u00e1g ABC\" at 72 pt fits comfortably on one line with the long\n  diacritical title-case word, with breathing room on both sides.\n- **Frame height:** 30 mm \u2248 354 px. 72 pt cap height plus comfortable leading.\n- **x (left edge):** `(pageWidth - frameWidth) / 2 = (2480 - 2008) / 2 \u2248 236 px`.\n  Horizontally centred.\n- **y (top edge):** 30 mm from the page top = `30 * 300 / 25.4 \u2248 354 px`.\n  This is \"near the top\": below the 3 mm bleed and a comfortable optical margin,\n  but not jammed against the trim. It leaves the upper third of the page for\n  the title block and the rest of the cover for illustration.\n- **Paragraph alignment:** centre (so the text is centred *inside* the frame\n  too, not just the frame on the page).\n\n### Font choice\n\n- **Primary:** **Helvetica Neue** (macOS system font; complete Latin Extended-A\n  coverage, including \u00e9 \u00e1 \u00ed \u00f3 \u00fa \u00f6 \u00fc \u0151 \u0171). Sans-serif, neutral, well-suited\n  to a children's-book title.\n- **Fallback if not present:** **Arial** (also ships with macOS, also covers\n  Hungarian glyphs).\n- The script attempts Helvetica Neue first via `Fonts.find(...)` (or whatever\n  the topic file confirms), falls back to Arial, and logs which one was used so\n  verification can confirm.\n\n### Why these specific decisions\n\n| Decision | Reason |\n|---|---|\n| `currentSpreadIndex` only set if not already 0 | Setting clears the selection (skill Critical Rules). The user said spread 0 is already current, so we read first, only assign if needed. |\n| All edits inside one `CompoundCommandBuilder` | Frame creation + font set + size set + alignment set should undo as a single user action. |\n| Compute in document pixels via `mm * dpi / 25.4` | Skill rule: never use `getSpreadExtents()` for absolute placement \u2014 it's in spread-internal units (~11.81\u00d7 off). Use `doc.widthPixels` / `heightPixels` and mm conversions. |\n| Vision QA via `render_spread` | Skill rule: a script may \"succeed\" while producing the wrong layout. The JPEG is ground truth. |\n| Log session UUID + frame rect from inside the script | `execute_script` swallows return values; we need explicit `console.log` for anything we want to inspect, including the `document_session_uuid` we'll feed to `render_spread`. |\n\n## Steps to execute\n\n1. Run discovery calls 1\u20139 above. Lock the exact factory names.\n2. Write `script.js` (this folder).\n3. Send `script.js` to `mcp__affinity__execute_script`.\n4. Read the logged `document_session_uuid` from the script's console output.\n5. Call `mcp__affinity__render_spread({ document_session_uuid, spread_index: 0 })`.\n6. Inspect the JPEG against the verification checklist in `verification.md`.\n7. If any check fails, refine the script and re-run. Do not declare success\n   without a passing render.\n8. Once correct, optionally `add_sdk_hint` recording the exact factory names\n   used (e.g. \"To add a text frame and set its font + size in one undoable\n   step, use DocumentCommand.createAddTextFrame + createSetCharacterAttributes\n   inside a CompoundCommandBuilder\").\n\n## Out of scope\n\n- Saving the document.\n- Exporting.\n- Adding any other cover content (illustration, subtitle, decorative elements).\n- Calling `mcp__affinity__*` tools \u2014 per task instructions, this run is\n  files-only.\n"}, {"name": "script.js", "type": "text", "content": "'use strict';\n\n// Place a centred 'Magyarorsz\u00e1g ABC' title frame near the top of spread 0\n// of the currently-open Publisher document.\n//\n// Assumptions (locked via discovery calls before final run):\n//   - Document is Affinity Publisher, A4 portrait, 300 dpi, units = mm.\n//   - Spread 0 is the cover (single page, isFacing=false).\n//   - DocumentCommand.createAddTextFrame(rect, string) exists. If not, the\n//     equivalent is createAddTextFrame / createInsertTextFrame /\n//     createAddPointTextFrame \u2014 confirm with read_sdk_documentation_topic(\"commands.js\").\n//   - Character/paragraph attributes are applied via\n//     DocumentCommand.createSetCharacterAttributes / createSetParagraphAttributes\n//     against the new frame's text range. Confirm signatures via storyTests.js.\n//\n// Coordinate gotcha (from preamble): use document pixels, computed from\n// `mm * doc.dpi / 25.4`. NEVER getSpreadExtents() for absolute placement.\n\nconst { Document } = require('/document');\nconst { DocumentCommand, CompoundCommandBuilder } = require('/commands');\nconst { Rect } = require('/geometry');\nconst { Fonts } = require('/fonts');\nconst { GlyphAtts } = require('/glyphatts');\nconst { ParagraphAtts, ParagraphAlignment } = require('/paragraphatts');\n\nfunction mmToPx(mm, dpi) {\n  return mm * dpi / 25.4;\n}\n\n// Try a list of font family names in order. Return the first that resolves.\n// Hungarian alphabet needs full Latin Extended-A coverage (\u00e9 \u00e1 \u00ed \u00f3 \u00fa \u00f6 \u00fc \u0151 \u0171).\n// Helvetica Neue and Arial both ship with macOS and cover the full set.\nfunction pickHungarianSans() {\n  const candidates = [\n    \"Helvetica Neue\",\n    \"Helvetica\",\n    \"Arial\",\n    \"SF Pro Text\",\n    \"Inter\"\n  ];\n  for (const name of candidates) {\n    try {\n      const f = Fonts.find(name); // confirm exact accessor in fonts.js\n      if (f) {\n        return { name, font: f };\n      }\n    } catch (e) {\n      // keep trying\n    }\n  }\n  return { name: \"Helvetica Neue\", font: null }; // last-ditch fallback by name string\n}\n\nfunction main() {\n  const doc = Document.current;\n  if (!doc) {\n    alert(\"Open a Publisher document on spread 0 (cover) before running this script.\");\n    return;\n  }\n\n  // Stay on spread 0; only assign if we're not already there. Setting the\n  // current spread clears the selection (skill rule).\n  if (doc.currentSpreadIndex !== 0) {\n    doc.currentSpreadIndex = 0;\n  }\n\n  const dpi = doc.dpi;\n  const pageWidthPx = doc.widthPixels;\n  const pageHeightPx = doc.heightPixels;\n\n  // Layout: frame 170 mm wide \u00d7 30 mm tall, top edge 30 mm below page top.\n  const frameWmm = 170;\n  const frameHmm = 30;\n  const topMm = 30;\n\n  const frameWpx = mmToPx(frameWmm, dpi);\n  const frameHpx = mmToPx(frameHmm, dpi);\n  const xPx = (pageWidthPx - frameWpx) / 2;\n  const yPx = mmToPx(topMm, dpi);\n\n  const rect = Rect.createXYWH(xPx, yPx, frameWpx, frameHpx);\n\n  const titleText = \"Magyarorsz\u00e1g ABC\";\n  const fontPt = 72;\n  const picked = pickHungarianSans();\n\n  console.log(\"session:\", doc.sessionUuid);\n  console.log(\"page (px):\", pageWidthPx, \"x\", pageHeightPx, \"@\", dpi, \"dpi\");\n  console.log(\"frame rect (px):\", rect.x, rect.y, rect.width, rect.height);\n  console.log(\"font candidate:\", picked.name, \"resolved:\", picked.font ? \"yes\" : \"no\");\n\n  // Build commands inside a CompoundCommandBuilder so undo treats this as one step.\n  const builder = CompoundCommandBuilder.create();\n\n  // 1. Add the text frame at the computed rect with the title string.\n  //    Factory name to confirm via commands.js \u2014 the cookbook lists\n  //    createAddTextFrame(rect, string) as the likely shape.\n  const addCmd = DocumentCommand.createAddTextFrame(rect, titleText);\n  builder.addCommand(addCmd);\n\n  // 2. Set character attributes (font family + size) on the new frame's range.\n  //    The exact factory + how it addresses the just-created frame must be\n  //    confirmed with read_sdk_documentation_topic(\"tests/storyTests.js\") and\n  //    \"glyphatts.js\". Pattern shown here is the commonly recorded shape:\n  //      createSetCharacterAttributes(target, range, atts)\n  //    where `target` is the newly-added frame's id and `range` is whole-story.\n  const glyph = GlyphAtts.createDefault();\n  if (picked.font) {\n    glyph.fontFamily = picked.name;\n  } else {\n    glyph.fontFamily = picked.name; // string fallback; SDK may resolve by name\n  }\n  glyph.fontSize = fontPt;\n  const setGlyphCmd = DocumentCommand.createSetCharacterAttributes(\n    addCmd.resultId,        // confirm: the text-frame factory exposes a result handle\n    null,                   // null range = whole story (confirm in storyTests.js)\n    glyph\n  );\n  builder.addCommand(setGlyphCmd);\n\n  // 3. Centre-align the paragraph(s) inside the frame.\n  const para = ParagraphAtts.createDefault();\n  para.alignment = ParagraphAlignment.Centre; // confirm enum name in paragraphatts.js\n  const setParaCmd = DocumentCommand.createSetParagraphAttributes(\n    addCmd.resultId,\n    null,\n    para\n  );\n  builder.addCommand(setParaCmd);\n\n  doc.executeCommand(builder.createCommand());\n\n  console.log(\"placed title frame:\", titleText, \"at\", fontPt, \"pt\", picked.name);\n  console.log(\"undo step: single compound command (1 user-visible undo)\");\n}\n\nmodule.exports.main = main;\n"}, {"name": "verification.md", "type": "text", "content": "# Verification plan \u2014 cover title frame\n\nThe skill is unambiguous: a script can succeed silently while producing the\nwrong layout. Treat the rendered JPEG as ground truth, not the script's\nconsole output.\n\n## Renders to run (in order)\n\n### 1. `mcp__affinity__render_spread` \u2014 spread 0, full\n\n```\nrender_spread({\n  document_session_uuid: <uuid logged by the script>,\n  spread_index: 0\n})\n```\n\nThis is the primary check. The whole cover spread comes back as a JPEG\n(max 1024 px). Confirms what the user actually sees.\n\n### 2. `mcp__affinity__render_selection` \u2014 only if the title frame can be\nre-selected after creation\n\nIf the SDK leaves the new frame selected (or the script re-selects it before\nexiting), call `render_selection` to get a tight crop of just the text. Useful\nfor inspecting glyph rendering of `\u00e1`, `\u00e9`, `\u00f3` at full resolution without\nthe rest of the page rescaling them down.\n\nIf the frame isn't selected at render time, skip this \u2014 `render_spread` is\nsufficient.\n\n## Visual checklist (read against render #1)\n\nEach item must pass. If any fail, refine the script and re-execute; do not\ndeclare success on partial passes.\n\n### Content\n- [ ] Title text is exactly **`Magyarorsz\u00e1g ABC`** \u2014 no quoting, encoding, or\n      typo issues.\n- [ ] All four diacritics render as Hungarian glyphs, not as `?`, hollow\n      boxes, or visibly substituted characters:\n      - `\u00e1` (a-acute) in *Magy**\u00e1**rorsz\u00e1g*\n      - `\u00f3` (o-acute) in *Magyar**\u00f3**rszag*\n      - `\u00e1` again in *orsz\u00e1gb\u2026* (no \u2014 only the two listed above)\n      - Verify both `\u00e1` glyphs look identical (same font fell through to the\n        same family for both).\n- [ ] Capitalisation matches: capital `M`, capital `ABC`, rest lowercase.\n\n### Position\n- [ ] Frame is horizontally centred on the page. Eyeball: equal whitespace\n      left and right of the frame, within a couple of pixels at render scale.\n      Sanity-check against the script's logged x = `(pageWidth - frameWidth)/2`.\n- [ ] Frame's top edge sits ~30 mm below the page's top trim \u2014 clearly below\n      the bleed strip but well above the page's vertical midpoint.\n- [ ] No part of the frame is clipped by the trim or pulled into the bleed.\n- [ ] The text inside the frame is centred (not left-flushed). Equal whitespace\n      to the left and right of the title within the frame.\n\n### Typography\n- [ ] Font is a **sans-serif**. No serifs visible on `M`, `g`, `r`. (If the\n      glyphs look like Times / Georgia, font fallback failed.)\n- [ ] Size is approximately **72 pt**. Cap height should read at roughly\n      `72 * 25.4 / 72 \u2248 25.4 mm` \u2248 1 inch \u2014 visually large; the title should\n      dominate the upper portion of the cover.\n- [ ] No line wrap. The title fits on one line at 72 pt within the 170 mm\n      frame width. (A4 is 210 mm wide; 170 mm leaves 20 mm margin each side.\n      \"Magyarorsz\u00e1g ABC\" at 72 pt in Helvetica Neue is ~140 mm wide \u2014 should\n      fit comfortably. If it wraps, the frame is too narrow or the font fell\n      back to something wider; widen frame to 180 mm and re-run.)\n\n### Document state\n- [ ] Spread 0 is still the current spread.\n- [ ] No other spreads were modified.\n- [ ] Only one new node was added (the text frame). Nothing else (stray\n      rectangles, duplicate frames) appeared.\n- [ ] Undo, if performed, removes the entire title frame in a single step\n      (compound command).\n\n## What to inspect in the script's `console.log` output\n\nCaptured via the script's own `console.log` calls (since `execute_script`\nswallows return values):\n\n- `session:` \u2014 the `document_session_uuid` value passed to `render_spread`.\n- `page (px):` \u2014 sanity-check that `widthPixels`/`heightPixels` correspond to\n  A4 at 300 dpi (~2480 \u00d7 3508). If they're different, the document is not\n  the assumed A4 spec; pause and confirm with the user before continuing.\n- `frame rect (px):` \u2014 `(x, y, w, h)`. Cross-check:\n  - `w` \u2248 2008 px (170 mm)\n  - `h` \u2248 354 px (30 mm)\n  - `x` \u2248 236 px (centred on a 2480 px page)\n  - `y` \u2248 354 px (30 mm from top)\n- `font candidate:` \u2014 which font the picker resolved.\n  - Best: `Helvetica Neue resolved: yes`.\n  - Acceptable: `Arial resolved: yes` or any other listed candidate.\n  - Bad: all fall through and the SDK lands on a default that doesn't cover\n    Hungarian glyphs. If this happens, the render will show `?` boxes for\n    the diacritics \u2014 re-run with a different candidate list.\n- `placed title frame: Magyarorsz\u00e1g ABC at 72 pt <font name>` \u2014 final\n  confirmation.\n\n## Failure modes & responses\n\n| Symptom on render | Likely cause | Fix |\n|---|---|---|\n| Diacritics show as `?` or `\u25a1` | Font lacks Latin Extended-A, or fontFamily not applied | Try next candidate in the list; or read `fonts.js` to confirm `Fonts.find` accessor and resubmit |\n| Title left-aligned in frame | `ParagraphAlignment.Centre` enum name wrong | Read `paragraphatts.js`; the enum may be `kCentre`, `Centre`, `Center`, or numeric |\n| Whole frame in wrong position | Coordinates ~12\u00d7 too large or too small | Re-confirm: did you use `getSpreadExtents()` accidentally? Use `doc.widthPixels` only |\n| Nothing visible after script | Forgot `executeCommand`, or `createAddTextFrame` factory name wrong | Read `commands.js`, grep for `TextFrame`; rerun |\n| Selection cleared mid-script and font not applied | Set `currentSpreadIndex` when already 0 | The script guards against this; if it still happens, the createAdd factory may be re-pointing the spread |\n| `NOT_ALLOWED` | Affinity Scripting permission missing (unlikely for in-doc edits, but possible if filesystem-related calls slip in) | Confirm with user that scripting is enabled |\n\n## Definition of done\n\nAll checklist items pass on render #1. Console logs match expected ranges.\nNo further action needed beyond optional `add_sdk_hint` recording the exact\nfactory names that worked.\n"}], "grading": null}, {"id": "eval-1-place-cover-title-frame-without_skill", "prompt": "I have a Publisher document open on spread 0 (the cover). I need a centred text frame near the top with the title 'Magyarorsz\u00e1g ABC' set in a Hungarian-friendly sans-serif at around 72 pt. After placing it, verify that the result matches what you intended. Produce the script(s) and verification plan as files. Do not actually execute anything via the MCP.", "eval_id": 1, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 honest uncertainty\n\nThis eval was run **without the affinity-design skill** and without calling any MCP tools, so the script is built on general knowledge of DTP scripting SDKs (InDesign ExtendScript, Scribus, Sketch, Figma plugin API, Canva SDK) plus the public framing of \"Affinity exposes a JS scripting SDK over Publisher/Designer/Photo.\" That means the *shape* of the script is plausible but specific names are guesses.\n\n## What I'm confident about\n- The geometric plan: 80%-wide frame, centred, top at ~12% of page height, 72 pt sans-serif.\n- The font shortlist for Hungarian: Inter, Source Sans 3/Pro, Helvetica Neue, Arial all cover Latin Extended-A including `\u0151` and `\u0171`. (The current title only uses `\u00e1` and `\u00f3`, which any sans-serif will have.)\n- The verification approach: programmatic readback first, then a rendered visual check, then negative checks.\n- The general structure of \"resolve doc \u2192 resolve spread \u2192 compute geometry \u2192 create frame \u2192 set text + style \u2192 return summary\".\n\n## What I'm guessing at and shouldn't pretend otherwise\nThe following are all **best-guess SDK surface**, isolated in helpers so they're easy to swap once the real Affinity SDK reference is consulted (preamble + sdk_documentation):\n\n- `app.activeDocument` \u2014 likely but unverified.\n- `doc.spreads` vs `doc.getSpreads()` \u2014 script tries both.\n- `spread.pages[0]` \u2014 likely; Affinity Publisher is page-based with spreads grouping pages.\n- `page.bounds` with `width`/`height`/`left`/`top` \u2014 guessed shape.\n- `page.addTextFrame(rect)` / `createTextFrame(rect)` \u2014 pure guess. Could equally be `app.create(\"TextFrame\", {...})` or a builder pattern.\n- `frame.text = ...`, `frame.font = ...`, `frame.fontSize = ...`, `frame.paragraphAlignment = \"center\"` \u2014 plausible but unverified property names.\n- Font probing via `app.fonts.list()` / `app.getInstalledFonts()` \u2014 guessed; the SDK may not expose font enumeration at all, in which case the script just trusts the first candidate.\n- Whether the SDK takes type sizes as a number (assumed pt) or as a typed value like `{ value: 72, unit: \"pt\" }`. Assumed plain number.\n- Whether mutations need to be wrapped in a transaction / undo group. Most DTP SDKs require this; the script does **not** wrap, which is a known gap. If Affinity requires `app.beginTransaction(...)` / `commit()`, wrap the whole IIFE body.\n\n## Things I deliberately did *not* do\n- I did not consult `mcp__affinity__read_sdk_documentation_topic` or the preamble (user instruction).\n- I did not read `affinity-design-skill` SKILL.md (user instruction).\n- I did not execute the script (user instruction).\n- I did not search the web for Affinity SDK docs \u2014 sticking to general knowledge as instructed.\n\n## What this means for the user\n- Treat `script.js` as a **structural draft**. Before running it, swap the guessed SDK calls (clearly labelled in code and listed above) for the real ones from the Affinity SDK preamble. The geometry, font logic, verification plan, and overall shape should survive that swap intact.\n- The verification plan in `verification.md` is independent of those SDK guesses \u2014 it should hold regardless.\n\n## Risk I'd flag to Sandra\nIf this script ran as-is via the Affinity MCP, the most likely failure modes are, in order:\n1. **Method-name mismatch** \u2014 script throws on `addTextFrame` or similar. Loud, easy to fix.\n2. **Silent serif fallback** \u2014 none of the candidate fonts installed and SDK doesn't expose font enumeration, so script trusts `Inter` and the renderer falls back to a serif default. Caught by visual verification.\n3. **Coordinates in wrong unit** \u2014 if the doc is in mm and the SDK interprets `rect` numbers as the doc's current unit, the 0.80*pageW stays correct (it's a ratio) but the `frameH = 120` literal will be 120 mm, which is gigantic. **Fix:** read the current unit and convert, or pass an explicit unit object. This is the subtlest bug to watch for.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Place centred cover title \"Magyarorsz\u00e1g ABC\"\n\n## Goal\nOn the currently open Affinity Publisher document, on **spread 0** (the cover), add a **centred text frame near the top** containing the title `Magyarorsz\u00e1g ABC`, set in a **Hungarian-friendly sans-serif** at approximately **72 pt**. After placement, verify the result matches intent.\n\n## Assumptions (flagged because the MCP cannot be called now)\n1. A document is already open and reachable through whatever the Affinity SDK exposes as the active document (likely `app.activeDocument` or equivalent).\n2. Spreads are 0-indexed and `spread 0` is the cover \u2014 i.e. a single-page cover, not a facing-pages spread that puts the cover on the right-hand page. If the document was set up with facing pages, \"spread 0\" may actually be a left page (back cover) plus right page (front cover); see Risks.\n3. Page units are in points (pt) or convertible. If the doc is in mm, the script must convert. I'll write the script to read the spread bounds and place by ratio rather than hardcoding pixel positions.\n4. The Affinity scripting SDK exposes something resembling: `document.spreads`, a way to add a text frame to a spread/page, a way to set the frame's text, font family, font size, and paragraph alignment. Exact method names below are best-guess and clearly marked.\n5. The host machine has at least one font that covers the Hungarian extended Latin glyphs (`\u00e1`, `\u00e9`, `\u00ed`, `\u00f3`, `\u00f6`, `\u0151`, `\u00fa`, `\u00fc`, `\u0171`). Most modern system sans-serifs do \u2014 see font choice below.\n\n## Font choice\nHungarian uses Latin Extended-A. Safe sans-serif candidates (in order of preference):\n1. **Inter** \u2014 excellent Latin Extended-A coverage, widely installed, neutral, pairs well with editorial children's work. Preferred default.\n2. **Source Sans 3** / **Source Sans Pro** \u2014 Adobe, ships with Creative Cloud and many systems.\n3. **Helvetica Neue** \u2014 macOS default, full coverage of `\u0151` and `\u0171`.\n4. **Arial** \u2014 last-resort universal fallback; ugly but always present.\n\nScript will try them in order and pick the first one Affinity reports as installed. If none of the candidates is available, fall back to whatever the document's default sans is and **log a warning** rather than silently using a serif.\n\n## Placement\n- **Horizontal:** centred on the spread's horizontal midpoint. Frame width = 80% of page width. Text alignment within frame = centre.\n- **Vertical:** \"near the top\" \u2014 top of frame at ~12% of page height down from the top edge. Frame height generously sized (~120 pt) so the 72 pt cap doesn't get clipped by tight auto-sizing.\n- **Type size:** 72 pt.\n- **Leading:** auto (or 1.1\u00d7 font size if explicit leading is required).\n- **Tracking:** 0.\n\n## Steps in the script\n1. Resolve the active document; bail with a clear error if none.\n2. Resolve `spread 0`; bail if it doesn't exist.\n3. Read spread page bounds (width, height, units).\n4. Compute frame rect: `x = pageWidth * 0.10`, `y = pageHeight * 0.12`, `w = pageWidth * 0.80`, `h = ~120 pt` (in current units).\n5. Pick a font: probe candidate list against installed fonts; fall back if none match.\n6. Create a text frame on spread 0 with the computed rect.\n7. Set its text to `Magyarorsz\u00e1g ABC`.\n8. Set font family, size 72 pt, paragraph alignment centre.\n9. Return a small JSON-ish summary: `{ frameId, spreadIndex, rect, font, size, text }` for the verification pass.\n\n## Verification approach (post-execution, not run now)\n- Re-query the created frame by ID and read back its text, font, size, alignment, and bounding rect.\n- Render spread 0 (e.g. `mcp__affinity__render_spread`) and visually confirm:\n  - Text reads `Magyarorsz\u00e1g ABC` exactly (diacritics intact \u2014 no `?` or tofu).\n  - Frame is horizontally centred (left and right margins on the spread are equal within ~1 pt).\n  - Frame sits near the top, not the middle.\n  - Type is sans-serif, looks ~72 pt against the page width.\n- If anything fails, do not patch silently \u2014 surface the diff and ask.\n\n## Risks / known uncertainty\n- **SDK method names are guesses.** I have not consulted the Affinity SDK preamble or docs (the user said don't call MCP tools and don't read project skill files). The script names methods like `document.spreads[0].addTextFrame(...)`, `frame.text = ...`, `frame.font = ...`. These are plausible but **almost certainly need adjustment** once the real SDK reference is consulted. The script is structured so those calls are isolated and easy to swap.\n- **Spread vs page.** If \"spread 0\" is a two-page facing spread, placing on the spread's geometric centre would put the frame across the gutter. The script falls back to placing on the **first page of spread 0** if a `pages` collection is exposed.\n- **Font availability.** If Inter / Source Sans / Helvetica Neue / Arial are all missing, the script logs and continues with the document default, which may be a serif. Verification will catch this.\n- **Units.** If the document is in mm, 72 pt \u2248 25.4 mm. The script keeps size in pt by passing `72` to whatever the size setter accepts, and assumes the SDK treats type size as points regardless of page units (true in every other DTP SDK I know of).\n- **Diacritic encoding.** The script uses a UTF-8 source file and a plain string literal. If the SDK's text setter requires escaped Unicode, swap to `\"Magyarorsz\u00e1g ABC\"`.\n"}, {"name": "script.js", "type": "text", "content": "// place-cover-title.js\n// Affinity Publisher SDK script.\n// Goal: on spread 0 of the active document, add a centred text frame near the\n// top containing \"Magyarorsz\u00e1g ABC\" in a Hungarian-friendly sans-serif at ~72pt.\n//\n// IMPORTANT: SDK method names below are best-guess. They are isolated in helpers\n// so they can be swapped quickly once the Affinity SDK reference is consulted.\n// See notes.md for the list of guesses.\n\n(function placeCoverTitle() {\n    var TITLE = \"Magyarorsz\u00e1g ABC\"; // UTF-8; if SDK requires escapes, use \"Magyarorsz\u00e1g ABC\"\n    var SIZE_PT = 72;\n    var FONT_CANDIDATES = [\n        \"Inter\",\n        \"Source Sans 3\",\n        \"Source Sans Pro\",\n        \"Helvetica Neue\",\n        \"Arial\"\n    ];\n\n    // ---------- 1. Resolve doc + spread ----------\n    var doc = (typeof app !== \"undefined\" && app.activeDocument)\n        ? app.activeDocument\n        : null;\n    if (!doc) {\n        throw new Error(\"No active document. Open the cover document first.\");\n    }\n\n    var spreads = doc.spreads || (doc.getSpreads && doc.getSpreads()) || [];\n    if (!spreads || spreads.length === 0) {\n        throw new Error(\"Document has no spreads.\");\n    }\n    var spread = spreads[0];\n    if (!spread) {\n        throw new Error(\"Spread 0 not found.\");\n    }\n\n    // ---------- 2. Page geometry ----------\n    // Prefer first page of the spread if available, so we don't straddle a gutter.\n    var page = (spread.pages && spread.pages.length > 0) ? spread.pages[0] : spread;\n    var bounds = page.bounds || page.pageBounds || page.frame || null;\n    if (!bounds) {\n        throw new Error(\"Could not read page bounds on spread 0.\");\n    }\n    var pageW = bounds.width  != null ? bounds.width  : (bounds.right - bounds.left);\n    var pageH = bounds.height != null ? bounds.height : (bounds.bottom - bounds.top);\n    var pageOriginX = bounds.left != null ? bounds.left : 0;\n    var pageOriginY = bounds.top  != null ? bounds.top  : 0;\n\n    // Frame rect: 80% wide, centred horizontally, top at 12% of page height.\n    var frameW = pageW * 0.80;\n    var frameH = 120; // generous so 72pt caps + descenders aren't clipped\n    var frameX = pageOriginX + (pageW - frameW) / 2;\n    var frameY = pageOriginY + pageH * 0.12;\n\n    // ---------- 3. Pick a font ----------\n    function pickFont(candidates) {\n        var installed = null;\n        try {\n            installed = (app.fonts && app.fonts.list && app.fonts.list()) ||\n                        (app.getInstalledFonts && app.getInstalledFonts()) ||\n                        null;\n        } catch (e) {\n            installed = null;\n        }\n        if (!installed) {\n            // Can't probe \u2014 return first candidate and let the SDK fall back.\n            return { name: candidates[0], probed: false };\n        }\n        var set = {};\n        for (var i = 0; i < installed.length; i++) {\n            var n = (typeof installed[i] === \"string\") ? installed[i] : installed[i].family;\n            if (n) set[n.toLowerCase()] = true;\n        }\n        for (var j = 0; j < candidates.length; j++) {\n            if (set[candidates[j].toLowerCase()]) {\n                return { name: candidates[j], probed: true };\n            }\n        }\n        return { name: candidates[candidates.length - 1], probed: true, fallback: true };\n    }\n    var picked = pickFont(FONT_CANDIDATES);\n\n    // ---------- 4. Create text frame ----------\n    // Best-guess SDK calls. Replace with real ones after consulting docs.\n    function addTextFrame(targetPage, rect) {\n        if (targetPage.addTextFrame)   return targetPage.addTextFrame(rect);\n        if (targetPage.createTextFrame) return targetPage.createTextFrame(rect);\n        if (doc.addTextFrame)          return doc.addTextFrame(targetPage, rect);\n        throw new Error(\"No known addTextFrame method on page/document.\");\n    }\n    var rect = { x: frameX, y: frameY, width: frameW, height: frameH };\n    var frame = addTextFrame(page, rect);\n    if (!frame) throw new Error(\"Text frame creation returned null.\");\n\n    // ---------- 5. Set text + style ----------\n    function setText(f, t)        { if (\"text\" in f) f.text = t; else if (f.setText) f.setText(t); else throw new Error(\"No way to set text on frame.\"); }\n    function setFont(f, name)     { if (f.font !== undefined) f.font = name; else if (f.setFont) f.setFont(name); else if (f.style) f.style.font = name; }\n    function setSize(f, ptSize)   { if (f.fontSize !== undefined) f.fontSize = ptSize; else if (f.setFontSize) f.setFontSize(ptSize); else if (f.style) f.style.fontSize = ptSize; }\n    function setAlignCentre(f)    {\n        if (f.paragraphAlignment !== undefined) { f.paragraphAlignment = \"center\"; return; }\n        if (f.alignment !== undefined)          { f.alignment = \"center\"; return; }\n        if (f.setAlignment)                     { f.setAlignment(\"center\"); return; }\n        if (f.style)                            { f.style.alignment = \"center\"; }\n    }\n\n    setText(frame, TITLE);\n    setFont(frame, picked.name);\n    setSize(frame, SIZE_PT);\n    setAlignCentre(frame);\n\n    // ---------- 6. Return summary for verification ----------\n    var summary = {\n        ok: true,\n        spreadIndex: 0,\n        page: { width: pageW, height: pageH, originX: pageOriginX, originY: pageOriginY },\n        frame: {\n            id: frame.id || frame.uid || null,\n            rect: rect,\n            text: TITLE,\n            font: picked.name,\n            fontProbed: picked.probed,\n            fontFallback: !!picked.fallback,\n            size: SIZE_PT,\n            alignment: \"center\"\n        }\n    };\n    if (typeof console !== \"undefined\" && console.log) {\n        console.log(\"placeCoverTitle: \" + JSON.stringify(summary));\n    }\n    return summary;\n})();\n"}, {"name": "verification.md", "type": "text", "content": "# Verification plan \u2014 cover title frame\n\nRun after the script executes. The goal is to confirm the placed frame matches intent, not just that the script returned ok.\n\n## A. Programmatic readback (cheap, do first)\n\nAfter execution, query the created frame by its returned `id` and assert:\n\n| Check | Expected | How |\n|---|---|---|\n| Text content | exactly `Magyarorsz\u00e1g ABC` | read `frame.text` (or equivalent); compare byte-for-byte. Must include `\u00e1` and `\u00f3` correctly. |\n| Font family | one of the candidate sans-serifs (`Inter`, `Source Sans 3`, `Source Sans Pro`, `Helvetica Neue`, `Arial`) | read `frame.font`; assert `picked.fallback === false` ideally |\n| Font size | `72` (pt) | read `frame.fontSize` |\n| Paragraph alignment | `center` | read `frame.paragraphAlignment` / `frame.alignment` |\n| Frame on spread 0 | yes | read `frame.parent` / spread index |\n| Frame width | \u2248 `pageWidth * 0.80` \u00b1 0.5 pt | read frame bounds |\n| Frame horizontal centre | within \u00b11 pt of page centre | `(frame.x + frame.width/2) \u2248 pageOriginX + pageWidth/2` |\n| Frame top | between 8% and 16% of page height down from top | `(frame.y - pageOriginY) / pageHeight \u2208 [0.08, 0.16]` |\n| No overflow | text fits inside frame | check the frame's overflow / overset flag if exposed |\n\nIf any of these fail \u2192 stop, do not \"fix\" silently, report.\n\n## B. Visual readback (catches what programmatic checks miss)\n\n1. Render spread 0 to PNG via `mcp__affinity__render_spread`.\n2. Open the PNG and confirm visually:\n   - **Glyphs render correctly.** No `?`, no tofu boxes, no missing-glyph squares. The `\u00e1` in `Magyarorsz\u00e1g` and the `\u00c1`-style accent on the capital `M\u2026\u00e1\u2026` must be visible. (Even though the title doesn't use `\u0151` or `\u0171`, those are the diacritics most likely to be missing in a non-Hungarian font; if `\u00e1` and `\u00f3` render fine, basic Latin Extended-A is covered, but I'd still spot-check.)\n   - **Visually centred.** Equal left/right whitespace to page edges.\n   - **Near the top.** Sits in the top ~quarter, not the middle.\n   - **Size feels like 72 pt.** Cap height roughly 1/12\u20131/10 of page height for a typical A4-ish page; sanity check, not exact.\n   - **Sans-serif.** No serifs on `M`, `A`, `B`, `C`.\n3. If the document is facing-pages and \"spread 0\" turned out to be a two-page spread (back+front cover), confirm the title is on the **front cover page**, not straddling the gutter or sitting on the back page.\n\n## C. Negative checks\n\n- Confirm only **one** new text frame was created on spread 0 (no accidental duplicates from re-runs).\n- Confirm nothing else on the spread was modified \u2014 existing objects' bounds and z-order unchanged.\n- Confirm document hasn't been saved/exported (script must not auto-save).\n\n## D. What to do on each failure mode\n\n| Symptom | Likely cause | Action |\n|---|---|---|\n| Tofu / `?` instead of `\u00e1`,`\u00f3` | font lacks Latin Extended-A or string was mis-encoded | switch to Inter or Helvetica Neue explicitly; if encoding, use `\"Magyarorsz\u00e1g ABC\"` |\n| Text is serif | none of candidate fonts installed; fell back to doc default | install Inter or hardcode Helvetica Neue (macOS) / Arial |\n| Frame off-centre | page bounds read with wrong origin (master page offset?) | use `page.bounds` not `spread.bounds`; recompute with page origin |\n| Frame straddles gutter | placed on spread-level coords with facing pages | always target `spread.pages[0]` (or `[1]` if cover is right-hand) |\n| Text overflows frame | 72 pt too big for narrow page | reduce frame width to 90% or accept smaller size; flag to user, don't auto-shrink type silently |\n| Size renders as 72 *units* in mm doc | SDK treated size in current page units | force size with explicit pt unit if SDK supports it; otherwise convert: `72 pt = 25.4 mm` |\n\n## E. Sign-off\n\nVerification passes only if: A all green, B visually clean, C no collateral changes. Otherwise, surface a diff and ask before iterating.\n"}], "grading": null}, {"id": "eval-2-export-each-page-as-pdf-with_skill", "prompt": "Export every page of the currently open Publisher book as a separate PDF file to my Desktop. Each file should be named `{bookname}-page-{1-based-index}.pdf`. Produce the script and explain how you'd handle errors (e.g. permissions denied). Do not execute anything via the MCP.", "eval_id": 2, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 uncertainties and error handling\n\n## Error: `NOT_ALLOWED`\n\nPer the skill SKILL.md (\"Permissions & error patterns\" table), `NOT_ALLOWED` from a filesystem call means **the user has disabled Filesystem access** in Affinity \u2192 Preferences \u2192 Scripting. This is not a script bug.\n\nHandling in this script:\n\n1. The per-page export is wrapped in `try/catch`. If the first page errors, the loop still attempts the rest \u2014 but realistically, if filesystem access is disabled, *every* page will fail with the same error, so the run will surface a long list of identical `NOT_ALLOWED` failures.\n2. The summary block detects this case (`/NOT[_ ]ALLOWED/i.test(...)`) and prints a clear hint telling the operator to enable Filesystem in Preferences \u2192 Scripting and re-run.\n3. The script does **not** silently retry. The skill explicitly says \"Do not silently retry\" for `NOT_ALLOWED`.\n\nOperator action when `NOT_ALLOWED` shows up:\n- Open Affinity \u2192 Preferences \u2192 Scripting \u2192 enable Filesystem.\n- Re-run the same script. No code change required.\n- If the user has already enabled it but is still seeing the error, sanity-check that `app.getUserDesktopPath` is the actual destination \u2014 writes outside `~/Desktop` are blocked even with the permission on (per SKILL.md: \"Filesystem access is Desktop-only\").\n\n## Other failure modes covered\n\n- **No open document** \u2192 `Document.current` is null \u2192 `alert(...)` and return cleanly.\n- **Single-page failure** (e.g. one corrupted spread) \u2192 caught, logged, loop continues. The other N\u22121 PDFs still land on Desktop.\n- **Bookname collisions** from `doc.name` containing slashes / special chars \u2192 `sanitiseBookName` strips path-hostile characters before composing the output path.\n- **Facing-pages document** (`isFacing: true`) \u2192 logged as a warning. Each spread will export as a 2-page PDF rather than 1-page; the operator decides whether to switch the doc to non-facing first.\n\n## Honest uncertainty \u2014 confirm before running\n\nThese are the things I could not nail down from the skill alone. The cookbook (recipe 6, \"Export the document as a PDF\") explicitly flags them as TBC.\n\n| Topic | What I assumed | Where to confirm |\n|---|---|---|\n| Document export method name | `doc.exportAs(path, config)` (cookbook \u00a76 uses this name as a placeholder; falls back to `doc.export` / `doc.exportTo`) | `read_sdk_documentation_topic(\"document.js\")` \u2014 search for `export` |\n| `ExportConfig` factory for PDF | `ExportConfig.createForFormat(ExportFormat.PDF)` (with `createDefault()` fallback) | `read_sdk_documentation_topic(\"exportconfig.js\")` |\n| PDF preset name (e.g. \"PDF (for print)\" vs \"PDF (digital \u2014 high quality)\") | leave at SDK default | `read_sdk_documentation_topic(\"exportconfig.js\")` |\n| Per-page scoping field on `ExportConfig` | sets `pageIndex` / `spreadIndex` / `pageRange` whichever exists | `read_sdk_documentation_topic(\"exportconfig.js\")` |\n| `doc.name` vs `doc.fileName` vs `doc.title` for the bookname | `doc.name` (matches cookbook \u00a76 usage) | `read_sdk_documentation_topic(\"document.js\")` |\n| Whether `Document` is the right exporter, or if there's an `Exportable` interface | tried `Document` methods first | `read_sdk_documentation_topic(\"exportableinterface.js\")` |\n\nI'd also run `search_sdk_hints(\"export each page as separate PDF\")` and `search_sdk_hints(\"ExportConfig PDF preset\")` first \u2014 per the skill, the hint pool usually has the exact recipe.\n\n## What I would *not* do\n\n- Bake exact API names into the script without confirming. The cookbook explicitly warns that `commands.js` (and by extension other large topics) change between SDK versions.\n- Skip the verification step. Even after the script logs all-OK, the JPEG/PDF on disk is the ground truth.\n- Try to write outside `~/Desktop`. The skill says Desktop-only; attempting elsewhere returns `NOT_ALLOWED`.\n- Call `add_sdk_hint` or `save_script_to_library` until the script has actually run successfully against a live document \u2014 recording an unverified hint pollutes the pool.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Export every page as a separate PDF\n\n## Goal\n\nFor the Publisher document currently open in Affinity, export every page as a standalone PDF onto the user's Desktop, named `{bookname}-page-{N}.pdf` (1-based).\n\nThe skill is explicit that filesystem writes are Desktop-only via `app.getUserDesktopPath`, so the destination path is bounded by that.\n\nBecause the book skeleton recipe creates documents with `isFacing: false`, `pageCount === spreadCount`. So \"every page\" maps cleanly to \"every spread, index 0..spreadCount-1\". The script must still cope with `isFacing: true` defensively (where one spread holds two pages) \u2014 see notes.md.\n\n## Discovery calls (skill-mandated)\n\nBefore writing or running anything, do these in order. Each is a `mcp__affinity__*` call \u2014 but per the test rules I am NOT executing them, only listing them.\n\n1. `read_sdk_documentation_topic(\"preamble\")` \u2014 once per session. Confirms filesystem permission semantics, current-spread behaviour, and surfaces any saved hints about per-page export.\n2. `search_sdk_hints(\"export each page as separate PDF\")` \u2014 high chance someone has already solved this. Also try `search_sdk_hints(\"Document export PDF per spread\")` and `search_sdk_hints(\"ExportConfig PDF preset\")`.\n3. `list_sdk_documentation` \u2014 pick the topics needed for export.\n4. `read_sdk_documentation_topic(\"exportconfig.js\")` \u2014 confirms the constructor / preset names for PDF (e.g. `ExportFormat.PDF`, any `PdfPreset.*`, page-range fields).\n5. `read_sdk_documentation_topic(\"document.js\")` \u2014 confirms the exact `Document.export*` method (`exportAs`, `exportTo`, `export`, etc.) and what it accepts (path + config, or path + format object).\n6. `read_sdk_documentation_topic(\"exportableinterface.js\")` \u2014 fallback if `Document` itself doesn't expose export, the spread/document may implement an `Exportable` interface.\n7. Optional: `read_sdk_documentation_topic(\"application.js\")` \u2014 confirm `app.getUserDesktopPath` is a property (no `()`), as the cookbook uses it without parentheses.\n\n## Approach\n\n1. Resolve `doc = Document.current`. Bail with `alert` if null.\n2. Read `doc.name` (or equivalent \u2014 confirm in `document.js`); strip extension and any path; sanitise to a filesystem-safe `bookname` (collapse spaces, drop slashes, keep diacritics if the OS supports them \u2014 Desktop on macOS does).\n3. Read `doc.spreadCount`. Loop `i = 0..spreadCount-1`.\n4. For each iteration:\n   - Build a per-page `ExportConfig` for PDF. The config needs to scope the export to a single page/spread \u2014 confirm field names in `exportconfig.js` (likely `pageRange`, `pageIndex`, or a `spreadIndex`).\n   - Compute `outPath = app.getUserDesktopPath + \"/\" + bookname + \"-page-\" + (i+1) + \".pdf\"`.\n   - Call `doc.<exportMethod>(outPath, config)` \u2014 exact method confirmed from `document.js`.\n   - Wrap in `try/catch`; capture any error and continue to next page so one bad page doesn't kill the run. Log every result via `console.log` (return values are swallowed).\n5. After the loop, log a summary: how many succeeded, how many failed, list of failed pages with their error strings.\n\n## Why this shape\n\n- **Loop over spreads, not via `currentSpreadIndex` switching.** The export config can target a page directly; switching the current spread on every iteration would clear the user's selection and is a wasted side effect (skill warns about this).\n- **No `CompoundCommandBuilder`.** Exports aren't document mutations \u2014 there is nothing to undo, so we don't need `executeCommand`.\n- **One file per call, not a single multi-page export with page splitting.** Splitting is brittle and hides per-page failures. One call per page = clear logs and clean error isolation.\n- **Module shape with `module.exports.main = main`.** Required by the MCP runner.\n\n## What I will NOT do (per test instructions)\n\nI will not call `mcp__affinity__execute_script`, `render_spread`, `read_sdk_documentation_topic`, `search_sdk_hints`, or any other `mcp__affinity__*` tool. Deliverables are files only.\n"}, {"name": "script.js", "type": "text", "content": "'use strict';\n\n// Export every page of the active Publisher document as a separate PDF\n// onto the user's Desktop, named \"{bookname}-page-{N}.pdf\" (1-based).\n//\n// Designed for the P8 hungary-2026 book where the doc was created with\n// isFacing:false, so pageCount === spreadCount and each spread == one page.\n// The script also copes (best-effort) with isFacing:true documents by\n// looping over spreads \u2014 a facing-pages spread will export both pages\n// to one PDF, which is logged so the operator can decide how to handle it.\n//\n// Exact API names below MUST be confirmed against the SDK before running:\n//   - Document export method (likely `doc.exportAs(path, config)`,\n//     possibly `doc.export(...)` or `doc.exportTo(...)`) \u2192 document.js\n//   - ExportConfig PDF preset / page-range fields \u2192 exportconfig.js\n//\n// Per the skill: filesystem writes are Desktop-only; failures surface as\n// `NOT_ALLOWED` if the user has Scripting \u2192 Filesystem disabled.\n\nconst { Document } = require('/document');\nconst { ExportConfig, ExportFormat } = require('/exportconfig');\nconst { app } = require('/application');\n\n// --- helpers -----------------------------------------------------------\n\n// Strip extension and any path; replace characters that are awkward on\n// macOS/Windows filesystems. Keep diacritics \u2014 the Desktop handles them.\nfunction sanitiseBookName(rawName) {\n  if (!rawName) return 'untitled';\n  // drop directory prefix if present\n  const lastSlash = Math.max(rawName.lastIndexOf('/'), rawName.lastIndexOf('\\\\'));\n  let name = lastSlash >= 0 ? rawName.substring(lastSlash + 1) : rawName;\n  // drop a single trailing extension (.afpub, .afdesign, etc.)\n  const dot = name.lastIndexOf('.');\n  if (dot > 0) name = name.substring(0, dot);\n  // collapse whitespace, replace path-hostile chars\n  name = name.replace(/[\\/\\\\:\\*\\?\"<>\\|]/g, '-').replace(/\\s+/g, ' ').trim();\n  return name.length ? name : 'untitled';\n}\n\n// Build a PDF ExportConfig scoped to a single page index.\n// The exact field names are SDK-version-dependent; confirm in\n// exportconfig.js. The shape below is the most common pattern.\nfunction buildPdfConfigForPage(pageIndex /* 0-based */) {\n  // Preferred API: ExportConfig.createForFormat(ExportFormat.PDF) or similar.\n  // Fall back gracefully if `createForFormat` doesn't exist by trying\n  // a default-constructed config.\n  let config;\n  if (typeof ExportConfig.createForFormat === 'function') {\n    config = ExportConfig.createForFormat(ExportFormat.PDF);\n  } else if (typeof ExportConfig.createDefault === 'function') {\n    config = ExportConfig.createDefault();\n    if ('format' in config) config.format = ExportFormat.PDF;\n  } else {\n    // Last resort \u2014 let `doc.exportAs` infer format from the .pdf path.\n    return null;\n  }\n\n  // Scope to one page. Field names to confirm in exportconfig.js \u2014 these\n  // three are the common candidates; we set whichever the config exposes.\n  if ('pageIndex' in config)   config.pageIndex   = pageIndex;\n  if ('spreadIndex' in config) config.spreadIndex = pageIndex;\n  if ('pageRange' in config)   config.pageRange   = { from: pageIndex, to: pageIndex };\n\n  // Reasonable PDF defaults \u2014 preset name to confirm. If `pdfPreset` /\n  // `preset` exists on the config, leave it at its default (\"PDF (for print)\"\n  // or \"PDF (digital \u2014 high quality)\" depending on SDK).\n  return config;\n}\n\n// Wrap the export call so the exact method name can be swapped in one place.\n// See document.js for the canonical name.\nfunction exportDocumentToPdf(doc, outPath, config) {\n  if (typeof doc.exportAs === 'function') {\n    return doc.exportAs(outPath, config);\n  }\n  if (typeof doc.export === 'function') {\n    return doc.export(outPath, config);\n  }\n  if (typeof doc.exportTo === 'function') {\n    return doc.exportTo(outPath, config);\n  }\n  throw new Error('No known export method on Document (tried exportAs, export, exportTo)');\n}\n\n// --- main --------------------------------------------------------------\n\nfunction main() {\n  const doc = Document.current;\n  if (!doc) {\n    alert('This script requires an open Publisher document.');\n    return;\n  }\n\n  const bookname = sanitiseBookName(doc.name);\n  const desktop  = app.getUserDesktopPath; // property, not function \u2014 see cookbook \u00a71\n  const total    = doc.spreadCount;        // with isFacing:false this equals pageCount\n\n  // Defensive note: with isFacing:true, one spread holds two pages and\n  // would export as a single 2-page PDF. We log a warning so the operator\n  // can re-run with a per-page export config if needed.\n  const isFacing = (typeof doc.isFacing === 'boolean') ? doc.isFacing : null;\n  if (isFacing === true) {\n    console.warn(\n      'Document has isFacing=true; each spread contains two pages. ' +\n      'Exports will be one PDF per spread, not one per page. ' +\n      'If you need strictly per-page output, switch the doc to isFacing=false.'\n    );\n  }\n\n  const failures = [];\n  let successes = 0;\n\n  for (let i = 0; i < total; i++) {\n    const pageNumber = i + 1; // 1-based for filename\n    const outPath = desktop + '/' + bookname + '-page-' + pageNumber + '.pdf';\n\n    try {\n      const config = buildPdfConfigForPage(i);\n      exportDocumentToPdf(doc, outPath, config);\n      console.log('OK   page', pageNumber, '\u2192', outPath);\n      successes++;\n    } catch (err) {\n      const msg = (err && err.message) ? err.message : String(err);\n      console.error('FAIL page', pageNumber, '\u2192', outPath, '::', msg);\n      failures.push({ page: pageNumber, path: outPath, error: msg });\n    }\n  }\n\n  console.log('---');\n  console.log('Export summary:', successes, 'succeeded,', failures.length, 'failed of', total, 'pages');\n  console.log('Bookname used  :', bookname);\n  console.log('Desktop path   :', desktop);\n  if (failures.length) {\n    console.log('Failures:', JSON.stringify(failures, null, 2));\n    if (failures.some(f => /NOT[_ ]ALLOWED/i.test(f.error))) {\n      console.log(\n        'Hint: NOT_ALLOWED indicates Affinity \u2192 Preferences \u2192 Scripting \u2192 ' +\n        'Filesystem access is disabled. Ask the user to enable it and re-run.'\n      );\n    }\n  }\n}\n\nmodule.exports.main = main;\n"}, {"name": "verification.md", "type": "text", "content": "# Verification\n\n## After running `execute_script`\n\nInspect the captured `console.log` stream first \u2014 `execute_script` swallows return values, so logs are the only in-script signal.\n\nExpected log shape on success (for an N-page doc):\n\n```\nOK   page 1 \u2192 /Users/<you>/Desktop/<bookname>-page-1.pdf\nOK   page 2 \u2192 /Users/<you>/Desktop/<bookname>-page-2.pdf\n...\nOK   page N \u2192 /Users/<you>/Desktop/<bookname>-page-N.pdf\n---\nExport summary: N succeeded, 0 failed of N pages\nBookname used  : <bookname>\nDesktop path   : /Users/<you>/Desktop\n```\n\n## Filesystem checks (do these on the host, not via the MCP)\n\n1. `ls ~/Desktop | grep -E '<bookname>-page-[0-9]+\\.pdf$' | wc -l` should equal `doc.spreadCount` (and equal `pageCount` when `isFacing:false`).\n2. The numeric range is contiguous from 1 to N \u2014 no gaps, no zero-pad mismatch.\n3. Each PDF file size is non-trivial (> ~10 KB for a real page; an empty/locked export tends to be \u22481 KB or absent).\n4. Spot-open `<bookname>-page-1.pdf` and `<bookname>-page-N.pdf` in Preview. Each should be exactly **1 PDF page** (unless the doc was facing, in which case page-1 may be a 2-up spread and the warning was logged).\n5. Visual content matches the source \u2014 e.g. for `hungary-2026`, page 1 should show the cover, page 38 the colophon.\n\n## In-Affinity sanity check (no MCP \u2014 manual)\n\n- File \u2192 Export\u2026 on a single page using the same PDF preset and confirm visual parity with the script's page-N PDF.\n- Confirm the user's Affinity \u2192 Preferences \u2192 Scripting still shows \"Filesystem access: enabled\" after the run (some configs gate per-domain).\n\n## Definition of success\n\n- Exit summary log reads `N succeeded, 0 failed of N pages`.\n- The Desktop contains exactly N files matching `<bookname>-page-{1..N}.pdf`.\n- Each file opens, has the correct page count (1), and visually matches the corresponding spread in the source `.afpub`.\n\n## Definition of partial success (still useful)\n\n- Some pages exported, some failed \u2014 failures are listed in the summary log with their error strings, and the operator can re-run for just those pages by tweaking the loop bounds. Existing successful PDFs are not overwritten unless re-run.\n\n## Definition of failure (must investigate before declaring done)\n\n- Empty Desktop / zero files written despite \"OK\" logs \u2192 the export method silently no-op'd; re-check `doc.exportAs` choice in `document.js`.\n- All pages logged `NOT_ALLOWED` \u2192 user has Filesystem scripting disabled (see notes.md).\n- File count > N or duplicate suffixes \u2192 bookname sanitisation produced collisions; inspect `sanitiseBookName` output.\n"}], "grading": null}, {"id": "eval-2-export-each-page-as-pdf-without_skill", "prompt": "Export every page of the currently open Publisher book as a separate PDF file to my Desktop. Each file should be named `{bookname}-page-{1-based-index}.pdf`. Produce the script and explain how you'd handle errors (e.g. permissions denied). Do not execute anything via the MCP.", "eval_id": 2, "outputs": [{"name": "notes.md", "type": "text", "content": "# Notes \u2014 honest uncertainty + assumptions\n\nI produced this without reading the Affinity SDK preamble or any project skill files (per the user's instructions). That means parts of `script.js` are best-effort guesses against a plausible Affinity-style JS API. Calling these out so they're not surprises.\n\n## Things I'm confident about\n\n- The high-level shape of the task: get active doc \u2192 loop pages \u2192 call a PDF export per page \u2192 name files `{bookname}-page-{i}.pdf`.\n- The error-handling philosophy: catch per-page, abort on global filesystem failure, slugify the bookname, summarise at the end.\n- The macOS permissions model: Publisher needs explicit Desktop access via System Settings \u2192 Privacy & Security \u2192 Files and Folders, and the user-visible symptom is a write/IO failure on the very first export.\n- File naming is unambiguous from the brief: 1-based, kebab-cased, `.pdf`.\n\n## Things I'm guessing at (every `TODO(sdk)` in the script)\n\n| Guess | Where | Risk if wrong |\n|---|---|---|\n| Active document accessor is `app.activeDocument` (fallback `app.documents.active`) | top of `main()` | Script can't start. Easy fix once the preamble is read. |\n| Page-count accessor is `doc.pageCount` / `doc.pages.length` | `getPageCount` | Script can't start. |\n| Per-page PDF export call is `doc.exportPDF(path, { pages, preset })` (Shape A) or `doc.exportTo(path, PdfExportOptions)` (Shape B) | `exportSinglePagePdf` | This is the highest-risk guess. If both shapes are wrong, every page fails. |\n| Preset name is `\"PDF (for print)\"` | constants | Export throws. Swap to whatever the preset dropdown shows. |\n| Document filename property is `doc.fileName` / `doc.file.name` / `doc.name` | `deriveBookname` | Bookname falls back to `untitled`. Cosmetic but noticeable. |\n| Home-dir is reachable via `app.system.homeDir` / `process.env.HOME` | `getHomeDir` | Falls back to a hardcoded `/Users/alexandraszenti` (taken from this environment's working path). User can override `DEST_DIR` at the top of the script. |\n| `app.fs.exists` is available for the `OVERWRITE = false` branch | `fileExists` | Silently always returns false \u2192 `OVERWRITE = false` becomes a no-op. Acceptable since `OVERWRITE = true` is the default. |\n| `console.log` is captured by the MCP runner | `log` | If not, no logs visible \u2014 swap in `app.log` once confirmed. |\n\nIf I'd been allowed to read the SDK preamble first, all of these would collapse to known answers and the script could be much terser.\n\n## Behaviour decisions worth flagging to the user\n\n- **Spreads.** The script exports **single pages**, one PDF per page index. If the book uses facing-page spreads and the user actually wants one PDF per spread, this needs to change (loop spreads instead of pages, and rename to `{bookname}-spread-{i}.pdf` or similar). Worth a one-line confirmation before running.\n- **Slugify does NOT fold accents.** `Magyarorsz\u00e1g` becomes `magyarorsz-g` (the `\u00e1` is replaced with `-`), which is ugly. If the user wants accent folding, swap the slugifier for one that calls `.normalize(\"NFKD\").replace(/[\u0300-\u036f]/g, \"\")` first. I left this out because Affinity's JS runtime may or may not implement `String.prototype.normalize` \u2014 easy to add once confirmed.\n- **Overwrite is on by default.** Re-running clobbers prior PDFs with the same name. Set `OVERWRITE = false` at the top to skip existing files instead.\n- **Hard abort on first-page permission error.** If page 1 fails with a permission-flavoured error, the script stops instead of attempting all N pages and producing N copies of the same error. Page 2+ permission errors are treated as per-page (which is unrealistic \u2014 real permission failures would hit every page \u2014 but the conservative behaviour is to keep going and report).\n- **No retries.** Per-page failures are not retried. If retries become useful (transient SDK hiccups), wrap the `exportSinglePagePdf` call in a small retry loop.\n- **No cleanup on abort.** Whatever PDFs were written before the abort stay on disk. That's intentional \u2014 partial output is more useful than nothing \u2014 but the user should be aware they may need to delete them before re-running.\n\n## What I'd do differently if running for real\n\n1. Read the SDK preamble. Resolve all `TODO(sdk)` markers. Delete the Shape-B fallback once Shape A is confirmed (less code = less to maintain).\n2. Run the smoke test from `verification.md` (page 1 only) before exporting all pages.\n3. If the book is `hungary-2026` (likely, given project context), pre-create a target subfolder like `~/Desktop/hungary-2026-pages/` instead of dumping ~38 PDFs onto the Desktop. The user asked for Desktop directly, so this script does that \u2014 but it's worth flagging.\n"}, {"name": "plan.md", "type": "text", "content": "# Plan \u2014 Export every page of the active Publisher book as separate PDFs\n\n## Goal\nFor the document currently open in Affinity Publisher, write one PDF per page to the user's Desktop, named:\n\n```\n{bookname}-page-{1}.pdf\n{bookname}-page-{2}.pdf\n...\n{bookname}-page-{N}.pdf\n```\n\n`{bookname}` = the document's filename without extension (fallback: `untitled` if the doc is unsaved).\nIndexing is **1-based** and matches the Pages panel order shown in the UI.\n\n## Constraints / context\n- Target host: Affinity Publisher via the \"Affinity MCP\" JS scripting SDK (the same JS surface used by `mcp__affinity__execute_script`). Designer/Photo are not relevant here \u2014 Publisher is the only one of the three that has multi-page documents.\n- Deliverable is a script + docs only. Nothing executes against the MCP in this turn.\n- I have not read the SDK preamble or the SDK docs in this turn (the user explicitly told me not to read project skill files / call MCP tools). So I am working from general knowledge of the Affinity scripting surface and standard ECMAScript. I flag every spot below where I'm guessing.\n\n## Approach\n\n1. **Resolve the active document.**\n   Get the active Publisher document handle. In most Affinity scripting surfaces this is something like `app.activeDocument` or `app.documents.active` \u2014 exact accessor noted as TODO in the script.\n2. **Derive `{bookname}`.**\n   Use the document's file name (strip directory + extension). If the document has never been saved, fall back to `app.activeDocument.name` (likely `\"Untitled\"` or similar) and lowercase/slug it.\n3. **Resolve the Desktop path.**\n   `${HOME}/Desktop`. The SDK is expected to expose either an env-style accessor or a path constant; if not, the script accepts an override via a `DEST_DIR` constant near the top.\n4. **Iterate pages.**\n   Loop `i = 0 .. pageCount-1`. For each page:\n   - Build the output filename: `${bookname}-page-${i+1}.pdf`.\n   - Call the SDK's \"export this page as PDF\" function, passing the destination file path and a PDF preset.\n   - On failure, catch, log, and continue (so one bad page doesn't kill the whole run).\n5. **Summary.**\n   At the end, print: total pages, succeeded count, failed count, and the list of failures with their reasons.\n\n## Page-export strategy (key uncertainty)\n\nThe Affinity scripting SDK is known to expose document export, but I'm not 100% sure on the exact API shape for **single-page** PDF export. Two plausible shapes:\n\n- **Shape A \u2014 explicit per-page export call.** Something like\n  `doc.exportPDF(filePath, { pages: [i], preset: \"PDF (for print)\" })` or\n  `doc.export({ format: \"pdf\", path, pageRange: [i, i] })`.\n- **Shape B \u2014 set page range on a PDF export options object, then export.** Construct a PDF export options object, set `pageRange = i+1..i+1` (1-based string), call `doc.export(...)`.\n\nThe script picks **Shape A** as the primary path and falls back to **Shape B** if Shape A throws \"not a function\" / \"unknown option\". Both branches are clearly marked `TODO` so the user can confirm against the SDK preamble before running.\n\n## Error handling strategy\n\nThe script must keep going on per-page failures and surface a clean report. Specific cases handled:\n\n| Class | How it's caught | What we do |\n|---|---|---|\n| No active document | `app.activeDocument` is null/undefined | Throw early with a clear message; nothing exported |\n| Desktop dir missing / not writable (permissions denied) | First-page export throws `EACCES` / \"permission denied\" / \"could not open file for writing\" | Abort whole run with a single clear message \u2014 retrying every page would just produce N identical failures |\n| Single-page export failure (e.g. corrupted page, font issue, transient SDK error) | Per-page `try/catch` | Log `{ page: i+1, error: msg }`, continue with next page |\n| File already exists | Overwrite by default. Optional `OVERWRITE = false` flag would skip + log \"skipped (exists)\". |\n| Filename collision from weird chars in `{bookname}` | Slugify before use: lowercase, replace anything outside `[a-z0-9-_]` with `-`, collapse repeats |\n| Unsaved document | `bookname` falls back to `untitled`; warn in the log |\n| SDK API mismatch (Shape A not present) | Try/catch around the export call; on `TypeError`, fall back to Shape B; if that also fails, abort with the original error |\n\nThe \"permissions denied\" case specifically: macOS will reject writes to `~/Desktop` if Publisher hasn't been granted Files-and-Folders / Full Disk Access for the Desktop folder. The SDK error for this typically surfaces as a write/IO error rather than a structured error code, so the script string-matches on `permission`, `denied`, `EACCES`, `not permitted` (case-insensitive) and prints a remediation hint:\n\n> \"Could not write to ~/Desktop. Grant Affinity Publisher access to the Desktop folder in System Settings \u2192 Privacy & Security \u2192 Files and Folders, then re-run.\"\n\n## Out of scope\n- Rasterised / PNG export. Spec says PDF.\n- Spreads vs single pages. Default is single pages, matching the 1-based UI page index. Noted in `notes.md` as a thing to confirm with the user if their book uses facing-page spreads.\n- Recombining the per-page PDFs.\n- Running the script. The user explicitly said do not execute via the MCP.\n"}, {"name": "script.js", "type": "text", "content": "/**\n * export-each-page.js\n *\n * Export every page of the currently open Affinity Publisher document\n * as a separate PDF on the user's Desktop.\n *\n * Output filename: `{bookname}-page-{1-based-index}.pdf`\n *   - {bookname} = active doc filename without extension, slugified.\n *   - index is 1-based and matches the Pages panel order.\n *\n * Run via the Affinity MCP `execute_script` tool. Do NOT run this against\n * a document with unsaved work you care about without saving first \u2014 this\n * script does not modify the document, but a crash mid-export could leave\n * Publisher in a weird state.\n *\n * IMPORTANT: I have not read the Affinity SDK preamble in this session.\n * Anything marked `TODO(sdk)` is my best guess at the API shape and\n * should be confirmed against the SDK docs before the first real run.\n */\n\n(function main() {\n  // ---------- config ----------\n  const DEST_DIR = `${getHomeDir()}/Desktop`;\n  const OVERWRITE = true; // set false to skip pages whose PDF already exists\n  const PDF_PRESET = \"PDF (for print)\"; // TODO(sdk): confirm preset name; \"PDF (digital - high quality)\" is another common one\n\n  // ---------- resolve active document ----------\n  // TODO(sdk): exact accessor. Common shapes seen in Affinity-style SDKs:\n  //   app.activeDocument\n  //   app.documents.active\n  //   app.documents[app.documents.activeIndex]\n  const doc =\n    (typeof app !== \"undefined\" && (app.activeDocument || (app.documents && app.documents.active))) ||\n    null;\n\n  if (!doc) {\n    throw new Error(\n      \"No active Publisher document. Open the book in Affinity Publisher and try again.\"\n    );\n  }\n\n  const bookname = slugify(deriveBookname(doc));\n  const pageCount = getPageCount(doc);\n\n  if (!pageCount || pageCount < 1) {\n    throw new Error(`Active document reports ${pageCount} pages \u2014 nothing to export.`);\n  }\n\n  log(`Exporting ${pageCount} pages of \"${bookname}\" to ${DEST_DIR}`);\n\n  // ---------- iterate ----------\n  const results = { ok: [], failed: [], skipped: [] };\n  let abortReason = null;\n\n  for (let i = 0; i < pageCount; i++) {\n    if (abortReason) break;\n\n    const oneBased = i + 1;\n    const filename = `${bookname}-page-${oneBased}.pdf`;\n    const fullPath = `${DEST_DIR}/${filename}`;\n\n    if (!OVERWRITE && fileExists(fullPath)) {\n      results.skipped.push({ page: oneBased, path: fullPath, reason: \"exists\" });\n      log(`  page ${oneBased}: skipped (exists)`);\n      continue;\n    }\n\n    try {\n      exportSinglePagePdf(doc, i, fullPath, PDF_PRESET);\n      results.ok.push({ page: oneBased, path: fullPath });\n      log(`  page ${oneBased}: ok`);\n    } catch (err) {\n      const msg = errorMessage(err);\n      results.failed.push({ page: oneBased, path: fullPath, error: msg });\n      log(`  page ${oneBased}: FAILED \u2014 ${msg}`);\n\n      // permissions failures are global, not per-page \u2014 bail early.\n      if (looksLikePermissionError(msg) && oneBased === 1) {\n        abortReason =\n          \"Could not write to \" +\n          DEST_DIR +\n          \". Grant Affinity Publisher access to the Desktop folder in \" +\n          \"System Settings \u2192 Privacy & Security \u2192 Files and Folders, then re-run.\";\n      }\n    }\n  }\n\n  // ---------- summary ----------\n  log(\"\");\n  log(`Done. ok=${results.ok.length}  failed=${results.failed.length}  skipped=${results.skipped.length}`);\n  if (results.failed.length) {\n    log(\"Failures:\");\n    for (const f of results.failed) log(`  - page ${f.page}: ${f.error}`);\n  }\n  if (abortReason) {\n    log(\"\");\n    log(\"ABORTED: \" + abortReason);\n    throw new Error(abortReason);\n  }\n\n  return results;\n\n  // =====================================================================\n  // helpers\n  // =====================================================================\n\n  /**\n   * Export a single page (0-based index) of `doc` to `outPath` as PDF.\n   * Tries the most likely SDK shape first, falls back to a second shape\n   * if the first throws TypeError / \"unknown option\".\n   */\n  function exportSinglePagePdf(doc, pageIndex, outPath, preset) {\n    // --- Shape A: explicit per-page export call. ---\n    // TODO(sdk): confirm method name and option keys.\n    try {\n      if (typeof doc.exportPDF === \"function\") {\n        return doc.exportPDF(outPath, { pages: [pageIndex], preset: preset });\n      }\n      if (typeof doc.export === \"function\") {\n        return doc.export({\n          format: \"pdf\",\n          path: outPath,\n          pages: [pageIndex],\n          preset: preset,\n        });\n      }\n    } catch (err) {\n      if (!isLikelyApiMismatch(err)) throw err;\n      // fall through to Shape B\n    }\n\n    // --- Shape B: configure a PDF export options object, then export. ---\n    // TODO(sdk): confirm constructor and property names.\n    if (typeof PdfExportOptions === \"function\") {\n      const opts = new PdfExportOptions();\n      opts.preset = preset;\n      // Affinity's UI-side page range is 1-based and string-y, e.g. \"3-3\".\n      opts.pageRange = `${pageIndex + 1}-${pageIndex + 1}`;\n      return doc.exportTo(outPath, opts);\n    }\n\n    throw new Error(\n      \"Could not find a per-page PDF export entry point on the document. \" +\n        \"Check the SDK docs and update exportSinglePagePdf().\"\n    );\n  }\n\n  function deriveBookname(doc) {\n    // Prefer the on-disk filename if available.\n    // TODO(sdk): confirm property names.\n    const candidates = [doc.fileName, doc.filename, doc.file && doc.file.name, doc.name];\n    for (const c of candidates) {\n      if (typeof c === \"string\" && c.length) return stripExt(basename(c));\n    }\n    return \"untitled\";\n  }\n\n  function getPageCount(doc) {\n    // TODO(sdk): confirm. Could be doc.pages.length, doc.pageCount, doc.spreads.flatMap(...).length.\n    if (typeof doc.pageCount === \"number\") return doc.pageCount;\n    if (doc.pages && typeof doc.pages.length === \"number\") return doc.pages.length;\n    if (typeof doc.getPageCount === \"function\") return doc.getPageCount();\n    throw new Error(\"Cannot determine page count on the active document.\");\n  }\n\n  function getHomeDir() {\n    // TODO(sdk): confirm. Possible shapes:\n    //   app.system.homeDir / app.env.HOME / process.env.HOME\n    if (typeof app !== \"undefined\") {\n      if (app.system && app.system.homeDir) return app.system.homeDir;\n      if (app.env && app.env.HOME) return app.env.HOME;\n    }\n    if (typeof process !== \"undefined\" && process.env && process.env.HOME) {\n      return process.env.HOME;\n    }\n    // Last resort: hardcode. The caller can override DEST_DIR at the top of the file.\n    return \"/Users/alexandraszenti\";\n  }\n\n  function fileExists(path) {\n    // TODO(sdk): confirm. If the SDK doesn't expose fs, this returns false\n    // and we just always overwrite \u2014 which is the default anyway.\n    try {\n      if (typeof app !== \"undefined\" && app.fs && typeof app.fs.exists === \"function\") {\n        return !!app.fs.exists(path);\n      }\n    } catch (_) {}\n    return false;\n  }\n\n  function slugify(s) {\n    return String(s)\n      .trim()\n      .toLowerCase()\n      .replace(/[^a-z0-9._-]+/g, \"-\")\n      .replace(/-+/g, \"-\")\n      .replace(/^-|-$/g, \"\") || \"untitled\";\n  }\n\n  function basename(p) {\n    const i = Math.max(p.lastIndexOf(\"/\"), p.lastIndexOf(\"\\\\\"));\n    return i >= 0 ? p.slice(i + 1) : p;\n  }\n\n  function stripExt(name) {\n    const i = name.lastIndexOf(\".\");\n    return i > 0 ? name.slice(0, i) : name;\n  }\n\n  function errorMessage(err) {\n    if (!err) return \"unknown error\";\n    if (typeof err === \"string\") return err;\n    return err.message || String(err);\n  }\n\n  function looksLikePermissionError(msg) {\n    return /permission|denied|eacces|not permitted|cannot open .* for writing/i.test(\n      msg || \"\"\n    );\n  }\n\n  function isLikelyApiMismatch(err) {\n    const m = errorMessage(err);\n    return /is not a function|unknown option|undefined is not|no such method/i.test(m);\n  }\n\n  function log(line) {\n    // TODO(sdk): if the MCP captures stdout, console.log is fine.\n    // Otherwise the SDK may expose app.log() \u2014 swap in here.\n    if (typeof console !== \"undefined\" && console.log) console.log(line);\n  }\n})();\n"}, {"name": "verification.md", "type": "text", "content": "# Verification plan\n\nHow I would confirm the script does what the user asked, before declaring it done. Nothing here was actually executed in this turn \u2014 the user told me not to run anything.\n\n## Pre-run checks (read SDK preamble first)\n\n1. Read the Affinity SDK preamble + the `Document` / export reference. Resolve every `TODO(sdk)` in `script.js`:\n   - active-document accessor (`app.activeDocument` vs `app.documents.active`)\n   - page-count accessor (`doc.pageCount` vs `doc.pages.length`)\n   - PDF export entry point (Shape A vs Shape B) + correct preset name\n   - filename / path accessor on the document\n   - home-dir accessor (or commit to a hardcoded `~/Desktop`)\n2. Save the open Publisher document at least once so `{bookname}` resolves to something meaningful instead of `untitled`.\n\n## Smoke test (cheap, catches API mismatches)\n\nRun a stripped-down script that only:\n1. Logs `pageCount`.\n2. Logs the resolved `bookname`.\n3. Exports **page 1 only** to `~/Desktop/{bookname}-page-1.pdf`.\n\nPass criteria:\n- One PDF appears on the Desktop.\n- Opening it shows exactly the content of page 1 of the book.\n- Filename matches `{bookname}-page-1.pdf` exactly (no spaces, no double-dashes, lowercase).\n\nIf smoke passes, run the full script.\n\n## Full-run acceptance criteria\n\nAfter running `script.js` against the open book:\n\n| # | Check | How |\n|---|---|---|\n| 1 | Exactly `pageCount` PDFs are produced | `ls ~/Desktop | grep -c \"^${bookname}-page-.*\\.pdf$\"` equals the page count shown in Publisher's Pages panel |\n| 2 | Filenames are 1-indexed and contiguous | Sorted numerically, indexes are `1..N` with no gaps |\n| 3 | Each PDF has exactly 1 page | Open a sample (first, middle, last) in Preview; check page count = 1 |\n| 4 | Page content matches the source page | Spot-check first/middle/last visually against Publisher's Pages panel |\n| 5 | No stray files | No `*.pdf.tmp`, no zero-byte PDFs |\n| 6 | Script summary matches reality | `ok` count from the script log equals the file count on disk; `failed` is empty |\n\n## Failure-mode tests I'd actually try\n\n1. **Permissions denied on Desktop.** Temporarily revoke Publisher's Desktop access in System Settings \u2192 Privacy & Security \u2192 Files and Folders, then run. Expected: script aborts on page 1 with the remediation hint, no half-written run, exit error message names the Desktop folder.\n2. **Re-run with files already present.** Run twice in a row with `OVERWRITE = true` (default) \u2014 second run should just overwrite cleanly. Then flip to `OVERWRITE = false` and re-run \u2014 every page should report `skipped (exists)` and no PDFs should be touched.\n3. **Unsaved document.** Open a brand-new Publisher doc, don't save, run script. Expected: `{bookname}` is `untitled`, run still completes. (If this matters to the user, we'd want to bail with a clearer warning instead.)\n4. **Weird filename characters.** Save the doc as `Magyarorsz\u00e1g 2026!.afpub`. Expected: `{bookname}` slugifies to something like `magyarorszag-2026` (no spaces, no `!`, accents folded by the slugifier \u2014 note: my slugifier does NOT fold accents, see `notes.md`).\n5. **Single-page document.** Should produce exactly one file `{bookname}-page-1.pdf`, no off-by-one.\n6. **API-shape mismatch.** Manually rename `doc.exportPDF` to something fake to force the fallback path; confirm Shape B is reached. (Only worth doing if the first try works and we want defence-in-depth.)\n\n## What I cannot verify without running\n\n- Whether the chosen PDF preset actually exists in this Publisher install. The script uses `\"PDF (for print)\"` as a guess \u2014 if it's wrong, the SDK will likely throw on export and the fallback won't help. First real run will reveal this.\n- Whether `app.fs.exists` is actually exposed. If not, `OVERWRITE = false` silently behaves like `OVERWRITE = true`. Documented in `notes.md`.\n- Whether the page range syntax in Shape B is `\"3-3\"` vs `[3,3]` vs `{from:3,to:3}`. The SDK preamble will say.\n"}], "grading": null}], "previous_feedback": {}, "previous_outputs": {}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

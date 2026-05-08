@@ -1,0 +1,6 @@
+{
+  "eval_id": 2,
+  "eval_name": "export-each-page-as-pdf",
+  "prompt": "Export every page of the currently open Publisher book as a separate PDF file to my Desktop. Each file should be named `{bookname}-page-{1-based-index}.pdf`. Produce the script and explain how you'd handle errors (e.g. permissions denied). Do not execute anything via the MCP.",
+  "assertions": []
+}
